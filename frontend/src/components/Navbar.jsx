@@ -10,16 +10,16 @@ const Navbar = () => {
 
   return (
     <div>
-      <div className='flex flex-col md:flex-row justify-between md:items-center gap-4 py-4'>
-        <div className='flex items-center justify-between md:block'>
-          <img className='w-24 sm:w-32 md:w-40' src={logo} alt="" />
-          {isOpen? <XIcon className='md:hidden text-[#035DCA] z-10' onClick={()=>setIsOpen(false)}/> : <Menu onClick={()=>setIsOpen(true)} className='md:hidden text-[#035DCA]'/> }
+      <div className='flex flex-col md:flex-row justify-between md:items-center gap-4 py-4 '>
+        <div className='flex items-center max-md:pr-1 justify-between md:block'>
+          <img className='w-32 md:w-40' src={logo} alt="" />
+          {isOpen? <XIcon className='md:hidden scale-130 text-[#035DCA] z-20' onClick={()=>setIsOpen(false)}/> : <Menu onClick={()=>setIsOpen(true)} className='md:hidden scale-130 text-[#035DCA]'/> }
         </div>
         <div
-        className={`md:hidden absolute inset-0 bg-[#E9E9E9] flex items-center justify-center transition-all duration-300 ease-out overflow-hidden ${
+        className={`md:hidden absolute  z-10 inset-0 bg-[#E9E9E9] flex items-center justify-center transition-all duration-300 ease-out overflow-hidden ${
           isOpen ? 'min-h-full opacity-100' : 'max-h-0 opacity-0'
         }`}>
-        <img className='w-24 sm:w-32 md:w-40 absolute top-4 left-4' src={logo} alt="" />
+        <img className='w-32 md:w-40 absolute top-4 left-4' src={logo} alt="" />
         <ul className='mt-2 flex flex-col text-center text-lg'>
           <NavLink onClick={()=>setIsOpen(false)} to='/'className={({isActive})=>`py-2 ${isActive?'bg-[#035DCA]/50 rounded-lg' : ''}`}>
             HOME
