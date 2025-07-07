@@ -37,7 +37,7 @@ export const details = [{
     pdf:richdadpdf,
     description:"very nice book",
     auther:"max",
-    category:"tech"
+    category:"code"
 },{
     id:4,
     name:"Manju",
@@ -53,5 +53,85 @@ export const details = [{
     pdf:deeppdf,
     description:"very nice book",
     auther:"max",
-    category:"tech"
+    category:"selfdev"
+},{
+    id:6,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"very nice book",
+    auther:"max",
+    category:"novel"
+},{
+    id:7,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:8,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"very nice book",
+    auther:"max",
+    category:"code"
+},{
+    id:9,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:10,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:11,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"very nice book",
+    auther:"max",
+    category:"novel"
+},{
+    id:12,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:13,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"very nice book",
+    auther:"max",
+    category:"code"
+},{
+    id:14,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:15,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
 },]

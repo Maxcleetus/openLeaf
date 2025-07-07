@@ -4,3 +4,6 @@
 * {
   font-family: 'Ubuntu', sans-serif;
 }
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
