@@ -6,7 +6,7 @@ const Footer = () => {
       <div className='pt-10 pb-2 md:grid md:grid-cols-[2fr_1fr_1fr] gap-12'>
         <div>
           <img className='w-32 md:w-40' src={logo} alt="" />
-          <p className='max-w-[600px] text-sm text-[#1E3929] py-2 tracking-wide'>Read Me is an online bookstore dedicated to bringing you the best books at your fingertips. From timeless classics to the latest bestsellers, we make reading easy, affordable, and enjoyable.</p>
+          <p className='max-w-[600px] text-sm text-[#1E3929] py-2 tracking-wide leading-5'>Read Me is an online bookstore dedicated to bringing you the best books at your fingertips. From timeless classics to the latest bestsellers, we make reading easy, affordable, and enjoyable.</p>
         </div>
         <div>
           <p className='md:text-2xl text-gray-800/90 text-lg font-bold'>COMPANY</p>
