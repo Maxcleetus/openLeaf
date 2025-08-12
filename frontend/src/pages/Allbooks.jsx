@@ -10,7 +10,6 @@ const Allbooks = () => {
   const navigate = useNavigate()
   const [filter, setFilter] = useState([])
   const [filBtn, setFilBtn] = useState(false)
-  console.log(filBtn)
 
   function filterBooks() {
     if (cat) {
@@ -53,7 +52,7 @@ const Allbooks = () => {
             </div> : null
           }
           <div>
-            <div className={`grid gap-4 ${filBtn ? 'py-6' : ''}  md:py-0 md:pl-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-5`}>
+            <div className={`grid gap-4 ${filBtn ? 'py-6' : ''}  md:py-0 md:pl-8 grid-cols-2 md:flex md:flex-wrap`}>
               {filter.map((item, index) => {
                 return (
                   <div onClick={() => navigate(`/singlebook/${item.id}`)}>

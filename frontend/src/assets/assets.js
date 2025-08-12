@@ -134,4 +134,268 @@ export const details = [{
     description:"very nice book",
     auther:"max",
     category:"selfdev"
+},{
+    id:16,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:17,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"very nice book",
+    auther:"max",
+    category:"novel"
+},{
+    id:18,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:19,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"very nice book",
+    auther:"Robert T. Kiyosaki.",
+    category:"code"
+},{
+    id:20,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:21,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:22,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"The 5 AM Club by Robin Sharma is a self-help book that encourages waking up early—specifically at 5 a.m.—to boost productivity, focus, and personal growth. Through a fictional story, the book introduces the 20/20/20 formula: 20 minutes of exercise, 20 minutes of reflection, and 20 minutes of learning to start your day with clarity and purpose. It emphasizes building morning routines to improve discipline, creativity, and overall success in life.",
+    auther:"max",
+    category:"novel"
+},{
+    id:23,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:24,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future",
+    auther:"Robert T. Kiyosaki.",
+    category:"code"
+},{
+    id:25,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:26,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:27,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:28,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"very nice book",
+    auther:"max",
+    category:"novel"
+},{
+    id:29,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:30,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"very nice book",
+    auther:"Robert T. Kiyosaki.",
+    category:"code"
+},{
+    id:31,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:32,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:33,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"The 5 AM Club by Robin Sharma is a self-help book that encourages waking up early—specifically at 5 a.m.—to boost productivity, focus, and personal growth. Through a fictional story, the book introduces the 20/20/20 formula: 20 minutes of exercise, 20 minutes of reflection, and 20 minutes of learning to start your day with clarity and purpose. It emphasizes building morning routines to improve discipline, creativity, and overall success in life.",
+    auther:"max",
+    category:"novel"
+},{
+    id:34,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:35,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future",
+    auther:"Robert T. Kiyosaki.",
+    category:"code"
+},{
+    id:36,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:37,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:38,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:39,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"very nice book",
+    auther:"max",
+    category:"novel"
+},{
+    id:40,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:8,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"very nice book",
+    auther:"Robert T. Kiyosaki.",
+    category:"code"
+},{
+    id:41,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:42,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
+},{
+    id:43,
+    name:"5 Am club",
+    image:Amclub5,
+    pdf:amclubpdf,
+    description:"The 5 AM Club by Robin Sharma is a self-help book that encourages waking up early—specifically at 5 a.m.—to boost productivity, focus, and personal growth. Through a fictional story, the book introduces the 20/20/20 formula: 20 minutes of exercise, 20 minutes of reflection, and 20 minutes of learning to start your day with clarity and purpose. It emphasizes building morning routines to improve discipline, creativity, and overall success in life.",
+    auther:"max",
+    category:"novel"
+},{
+    id:44,
+    name:"Harry potter one",
+    image:Harry1,
+    pdf:harry1pdf,
+    description:"very nice book",
+    auther:"max",
+    category:"story"
+},{
+    id:45,
+    name:"Rich dad poor dad",
+    image:richDad,
+    pdf:richdadpdf,
+    description:"Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future Rich Dad Poor Dad by Robert T. Kiyosaki is a personal finance classic that contrasts the financial mindsets of two father figures—his own educated but financially struggling father (Poor Dad) and his best friend's wealthy and financially savvy father (Rich Dad). Through their teachings, Kiyosaki explains the importance of financial literacy, investing, and building passive income. The book emphasizes learning how money works, acquiring assets, and breaking free from the cycle of living paycheck to paycheck. It inspires readers to think like entrepreneurs and take control of their financial future",
+    auther:"Robert T. Kiyosaki.",
+    category:"code"
+},{
+    id:46,
+    name:"Manju",
+    image:manju,
+    pdf:manjupdf,
+    description:"very nice book",
+    auther:"max",
+    category:"notes"
+},{
+    id:47,
+    name:"deepwork",
+    image:deepWork,
+    pdf:deeppdf,
+    description:"very nice book",
+    auther:"max",
+    category:"selfdev"
 },]

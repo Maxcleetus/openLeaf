@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import heroImg from '../assets/pic/hero222.png'; // Replace with your actual hero image
 import { NavLink } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import { Book } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import Circle from '../components/Circle';
 import Card from '../components/Card';
