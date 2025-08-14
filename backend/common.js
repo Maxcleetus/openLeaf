@@ -17,5 +17,8 @@ router.post(
 );
 
 router.post("/login", adminLogin );
+router.get("/auth", verifyAdminToken, (req, res) => {
+  res.json({ valid: true});
+});
 
 export default router;

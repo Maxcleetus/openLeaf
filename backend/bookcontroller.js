@@ -4,6 +4,7 @@ import { cloudinary } from "./coludinary.js";
 const addBook = async (req, res) => {
   try {
     const { name, description, author, category } = req.body;
+    console.log("Adding book:", name, description, author, category);
 
     // Upload image to Cloudinary
     const imageResult = await cloudinary.uploader.upload(req.files.image[0].path, {
