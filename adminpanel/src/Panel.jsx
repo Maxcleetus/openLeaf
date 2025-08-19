@@ -76,7 +76,7 @@ export default function BookInputForm() {
     const token = localStorage.getItem("token"); 
 
     // Send to backend
-    const response = await fetch("http://localhost:3000/api/common/addBook", {
+    const response = await fetch("https://backend-195k.onrender.com/api/common/addBook", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`, // Send token for authentication
