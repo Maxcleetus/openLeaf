@@ -55,7 +55,7 @@ const Allbooks = () => {
             <div className={`grid gap-4 ${filBtn ? 'py-6' : ''}  md:py-0 md:pl-8 grid-cols-2 md:flex md:flex-wrap`}>
               {filter.map((item, index) => {
                 return (
-                  <div onClick={() => navigate(`/singlebook/${item.id}`)}>
+                  <div onClick={() => navigate(`/singlebook/${item._id}`)}>
                     <Card name={item.name} image={item.image} />
                   </div>
                 )

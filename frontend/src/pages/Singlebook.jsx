@@ -12,14 +12,17 @@ const Singlebook = () => {
 
 
   function getOneBook() {
-    let book = details.filter(item => item.id == bookid)
+    let book = details.filter(item => item._id == bookid)
     setOneBook(book)
   }
 
   function relatedBooks() {
-    let rel = details.filter(books => books.category == oneBook[0].category)
+    let rel = details.filter(
+      book => book.category === oneBook[0].category && book._id !== oneBook[0]._id
+    )
     setRelBook(rel)
   }
+
   // details of one book
   useEffect(() => {
     getOneBook()
@@ -45,9 +48,9 @@ const Singlebook = () => {
               </div>
               <div className='md:border-3 md:bg-white/30 md:border-[#035DCA]/80 w-full md:flex-1 rounded-lg'>
                 <div className='flex flex-col items-center'>
-                  <h1 className='text-xl md:text-3xl font-bold my-2 text-[#1E2939] border-b-1 md:border-b-2 border-[#035DCA]/60 '>{item.name}</h1>
+                  <h1 className='text-xl md:text-3xl font-bold my-2 text-[#1E2939] border-b-1 md:border-b-2 border-[#035DCA]/60 text-center '>{item.name}</h1>
                   <div className='flex gap-2'>
-                    <p className='text-[#1E2939] text-xs md:text-sm bg-[#035DCA]/10 rounded-3xl md:font-medium px-1 md:px-2 md:py-1'>Author : {item.auther}</p>
+                    <p className='text-[#1E2939] text-xs md:text-sm bg-[#035DCA]/10 rounded-3xl md:font-medium px-1 md:px-2 md:py-1'>Author : {item.author}</p>
                     <p className='text-[#1E2939] text-xs md:text-sm bg-[#035DCA]/10 rounded-3xl md:font-medium px-1 md:px-2 md:py-1'>Category : {item.category}</p>
                   </div>
                   <div className='mt-2 pt-1 w-[300px] h-[300px] border-2 md:border-0 border-[#035DCA]/40 rounded-lg md:rounded-0 p-2 text-sm md:text-lg md:px-6 items-center md:h-70 md:w-auto tracking-wider leading-8 font-medium text-gray-500 overflow-y-scroll scrollbar-hidden'>
@@ -70,7 +73,7 @@ const Singlebook = () => {
       <div className='flex overflow-x-scroll scrollbar-hidden gap-6'>
         {
           relBook.map((item) => (
-            <div className="min-w-[200px] cursor-pointer" onClick={() => navigate(`/singlebook/${item.id}`)}>
+            <div className="min-w-[200px] cursor-pointer" onClick={() => navigate(`/singlebook/${item._id}`)}>
               <div>
                 <img className='max-w-[200px] rounded-lg border-[#035DCA] p-1 bg-[#035DCA]/80' src={item.image} alt="" />
               </div>

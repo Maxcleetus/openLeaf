@@ -4,15 +4,10 @@ import { toast } from "react-toastify"
 
 const categories = [
   "notes",
-  "fiction",
-  "non-fiction",
-  "textbook",
-  "reference",
-  "biography",
-  "science",
-  "history",
-  "technology",
-  "other",
+  "novel",
+  "story",
+  "code",
+  "selfdev",
 ]
 
 export default function BookInputForm() {

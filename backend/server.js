@@ -6,6 +6,7 @@ import {connectCloudinary} from "./coludinary.js";
 import adminRoute from "./common.js";
 dotenv.config();
 
+const port = process.env.PORT || 3000;
 
 const app = e();
 
@@ -25,6 +26,6 @@ connectDB();
  connectCloudinary();
 
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log("Server is running on port 3000");
 });

@@ -3,6 +3,8 @@ import multer from "multer";
 import { addBook } from "./bookcontroller.js";
 import { adminLogin } from "./jwt.js";
 import { verifyAdminToken } from "./auth.js";
+import { getDetails } from "./details.js";
+
 
 const router = express.Router();
 
@@ -17,6 +19,7 @@ router.post(
 );
 
 router.post("/login", adminLogin );
+router.get("/details", getDetails );
 router.get("/auth", verifyAdminToken, (req, res) => {
   res.json({ valid: true});
 });

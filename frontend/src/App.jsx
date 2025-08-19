@@ -7,18 +7,14 @@ import Footer from './components/Footer'
 import Allbooks from './pages/Allbooks'
 import Preloader from './components/Preloader'
 import Singlebook from './pages/Singlebook'
+import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer } from "react-toastify"
+import { useAppContext } from './context/AppContext'
 
 const App = () => {
+  const {loading} = useAppContext()
 
-  const [loader,setLoader] = useState(true)
-
-  useEffect(()=>{
-    const timer = setTimeout(()=>{
-        setLoader(false)
-    },1500)
-    return ()=> clearTimeout(timer)
-  },[])
-  if(loader) return <Preloader/>
+  if(loading) return <Preloader/>
 
   return (
     <div className='px-4 md:px-8 lg:px-48 bg-[#E9E9E9] min-h-screen' >
@@ -31,6 +27,7 @@ const App = () => {
         <Route path='/singlebook/:bookid' element={<Singlebook/>}/>
       </Routes>
       <Footer/>
+      <ToastContainer />
     </div>
   )
 }

@@ -50,12 +50,13 @@ const Navbar = () => {
           <div className='relative z-40'>
             {
               focus ? <div className=' fixed inset-0 bg-[#E9E9E9]'>
+                <p className='fixed top-4 right-4 cursor-pointer' onClick={() => { setFocused(false); setFilter(''); }}>Cancel</p>
                 <div className='grid grid-cols-2 px-2 md:flex flex-wrap gap-2 items-center scrollbar-hidden justify-center overflow-y-scroll pt-24 h-full'>
                   {details.filter((item) => {
                     return filter.toLowerCase() === '' ? item : item.name.toLowerCase().includes(filter.toLowerCase())
                   }).slice(0, 20).map((item) => (
                     <div>
-                      <img onClick={() =>{ navigate(`/singlebook/${item.id} `); setFocused(false); setFilter('');} }  className='w-64 h-64 border-2 border-[#035DCA] rounded-lg' src={item.image} alt="" />
+                      <img onClick={() =>{ navigate(`/singlebook/${item._id} `); setFocused(false); setFilter('');} }  className='w-64 h-64 border-2 border-[#035DCA] rounded-lg' src={item.image} alt="" />
                     </div>
                   ))}
                 </div>

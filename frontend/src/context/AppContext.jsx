@@ -1,18 +1,40 @@
-import { createContext , useContext , useState } from "react";
-import {details} from '../assets/assets.js'
-const AppContext = createContext()
+import { createContext, useContext, useState, useEffect } from "react";
 
+const AppContext = createContext();
 
-export const AppProvider = ({children})=>{
+export const AppProvider = ({ children }) => {
+  const [details, setDetails] = useState(null); // null until loaded
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    const value = {details}
+  // Fetch details from backend
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/common/details"); // change URL to your backend
+        console.log('Fetching details from backend:', res);
+        if (!res.ok) {
+          throw new Error("Failed to fetch details");
+        }
+        const data = await res.json();
+        setDetails(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return (
-        <AppContext.Provider value={value}>
-            {children}
-        </AppContext.Provider>
-    )
+    fetchDetails();
+  }, []);
 
-}
+  const value = { details, loading, error };
 
-export const useAppContext = ()=> useContext(AppContext)
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useAppContext = () => useContext(AppContext);

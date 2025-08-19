@@ -82,7 +82,7 @@ const Home = () => {
             for(let i = 0 ; i<limit ; i++){
               if(index < limit){
                 return(
-                    <div onClick={()=>navigate(`/singlebook/${item.id}`)} >
+                    <div onClick={()=>navigate(`/singlebook/${item._id}`)} >
                       <Card name={item.name} image={item.image} />
                     </div>
                 )
