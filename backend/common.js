@@ -20,7 +20,7 @@ router.post(
 
 router.post("/login", adminLogin );
 router.get("/details", getDetails );
-router.get("/session", verifyAdminToken, (req, res) => {
+router.get("/auth", verifyAdminToken, (req, res) => {
   res.json({ valid: true});
 });
 
