@@ -48,14 +48,14 @@ const Allbooks = () => {
               <p onClick={() => cat === 'code' ? navigate(`/allbook`) : navigate(`/allbook/code`)} className={` rounded-lg border-2 border-[#D1D5DB] text-gray-500 font-medium min-w-full md:min-w-[250px] px-2 py-1 ${cat == 'code' ? 'bg-gray-300' : 'bg-white'} `}>Code</p>
               <p onClick={() => cat === 'notes' ? navigate(`/allbook`) : navigate(`/allbook/notes`)} className={` rounded-lg border-2 border-[#D1D5DB] text-gray-500 font-medium min-w-full md:min-w-[250px] px-2 py-1 ${cat == 'notes' ? 'bg-gray-300' : 'bg-white'} `}>Notes</p>
               <p onClick={() => cat === 'selfdev' ? navigate(`/allbook`) : navigate(`/allbook/selfdev`)} className={` rounded-lg border-2 border-[#D1D5DB] text-gray-500 font-medium min-w-full md:min-w-[250px] px-2 py-1 ${cat == 'selfdev' ? 'bg-gray-300' : 'bg-white'} `}>Selfdev</p>
-              <p onClick={() => cat === 'novel' ? navigate(`/allbook`) : navigate(`/allbook/novel`)} className={` rounded-lg border-2 border-[#D1D5DB] text-gray-500 font-medium min-w-full md:min-w-[250px] px-2 py-1 ${cat == 'novel' ? 'bg-gray-300' : 'bg-white'} `}>Novel</p>
+              <p onClick={() => cat === 'novel' ?  navigate(`/allbook`): navigate(`/allbook/novel`)} className={` rounded-lg border-2 border-[#D1D5DB] text-gray-500 font-medium min-w-full md:min-w-[250px] px-2 py-1 ${cat == 'novel' ? 'bg-gray-300' : 'bg-white'} `}>Novel</p>
             </div> : null
           }
           <div>
             <div className={`grid gap-4 ${filBtn ? 'py-6' : ''}  md:py-0 md:pl-8 grid-cols-2 md:flex md:flex-wrap`}>
               {filter.map((item, index) => {
                 return (
-                  <div onClick={() => navigate(`/singlebook/${item._id}`)}>
+                  <div onClick={() =>(window.scrollTo(0,0), navigate(`/singlebook/${item._id}`))}>
                     <Card name={item.name} image={item.image} />
                   </div>
                 )
