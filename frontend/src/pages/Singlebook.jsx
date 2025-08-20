@@ -60,7 +60,7 @@ const Singlebook = () => {
               </div>
             </div>
             <div className="w-full flex justify-center">
-              <a href={item.pdf} download={item.pdf}>
+              <a href={item.pdf} download={`${item.pdf}.pdf`}>
                 <button className="bg-[#035DCA]/80 px-2 py-1 md:px-3 md:py-2 rounded-lg text-white font-medium">
                   Download
                 </button>
