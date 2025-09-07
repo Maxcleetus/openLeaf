@@ -10,6 +10,7 @@ import Singlebook from './pages/Singlebook'
 import "react-toastify/dist/ReactToastify.css"
 import { ToastContainer } from "react-toastify"
 import { useAppContext } from './context/AppContext'
+import Chatbot from './components/Chatbot'
 
 const App = () => {
   const {loading} = useAppContext()
@@ -28,6 +29,7 @@ const App = () => {
       </Routes>
       <Footer/>
       <ToastContainer />
+      <Chatbot/>
     </div>
   )
 }

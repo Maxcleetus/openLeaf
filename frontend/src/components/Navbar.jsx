@@ -30,8 +30,8 @@ const Navbar = () => {
             <NavLink onClick={() => setIsOpen(false)} to='/allbook' className={({ isActive }) => `py-2 px-2 ${isActive ? 'bg-[#035DCA]/50 rounded-lg' : 'border-0'}`}>
               ALL-BOOKS
             </NavLink>
-            <NavLink onClick={() => setIsOpen(false)} to='/contact' className={({ isActive }) => `py-2 ${isActive ? 'bg-[#035DCA]/50 rounded-lg' : 'border-0'}`}>
-              CONTACT
+            <NavLink onClick={() => setIsOpen(false)} to='/contact' className={({ isActive }) => `py-2 px-2 ${isActive ? 'bg-[#035DCA]/50 rounded-lg' : 'border-0'}`}>
+              CONTRIBUTE
             </NavLink>
           </ul>
         </div>
@@ -43,7 +43,7 @@ const Navbar = () => {
             ALL-BOOKS
           </NavLink>
           <NavLink to='/contact' className={({ isActive }) => `${isActive ? 'border-b-2 border-b-[#035DCA]/50' : 'border-0'}`}>
-            CONTACT
+            CONTRIBUTE
           </NavLink>
         </div>
         <div onClick={()=>{setFocused(!focus);setFilter('');}}>

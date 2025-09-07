@@ -53,75 +53,76 @@ export default function Contact() {
     setImagePreview(null)
     setPdfName("")
   }
-// 🔥 Upload file to Cloudinary
-async function uploadToCloudinary(file) {
-  if (!file) return null;
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "maxcleetus"); // your preset
+  // 🔥 Upload file to Cloudinary
+  async function uploadToCloudinary(file) {
+    if (!file) return null
 
-  // Detect resource type (image vs pdf/other files)
-  let resourceType = "image";
-  if (file.type === "application/pdf" || file.type.startsWith("application/")) {
-    resourceType = "raw";
-  }
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", "maxcleetus") // your preset
 
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/duzg93hdg/${resourceType}/upload`,
-    {
-      method: "POST",
-      body: formData,
+    // Detect resource type (image vs pdf/other files)
+    let resourceType = "image"
+    if (file.type === "application/pdf" || file.type.startsWith("application/")) {
+      resourceType = "raw"
     }
-  );
 
-  const data = await res.json();
-  console.log(data)
-
-  if (!res.ok) {
-    throw new Error(data.error?.message || "Upload failed");
-  }
-
-  return data.secure_url; // ✅ always return URL string
-}
-
-// 🔥 Submit handler
-async function handleSubmit(e) {
-  e.preventDefault();
-  setLoading(true);
-
-  try {
-    // Upload files in parallel (faster & safer)
-    const [imageUrl, pdfUrl] = await Promise.all([
-      bookData.image ? uploadToCloudinary(bookData.image) : null,
-      bookData.pdf ? uploadToCloudinary(bookData.pdf) : null,
-    ]);
-
-    // Send email with links
-    await emailjs.send(
-      "service_2a77gem", // from EmailJS
-      "template_42ltipp", // from EmailJS
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/duzg93hdg/${resourceType}/upload`,
       {
-        name: bookData.name,
-        author: bookData.author,
-        category: bookData.category,
-        description: bookData.description,
-        pdfLink: pdfUrl || "No file uploaded",
-        imageLink: imageUrl || "No image uploaded",
-      },
-      "R5ELlKbvKNhoRhHuq" // from EmailJS
-    );
-    console.log(bookData);
+        method: "POST",
+        body: formData,
+      }
+    )
 
-    toast.success("Book submitted successfully ✅");
-    resetForm();
-  } catch (err) {
-    console.error("Error:", err);
-    toast.error("Failed to send ❌");
-  } finally {
-    setLoading(false);
+    const data = await res.json()
+    console.log(data)
+
+    if (!res.ok) {
+      throw new Error(data.error?.message || "Upload failed")
+    }
+
+    return data.secure_url // ✅ always return URL string
   }
-}
+
+  // 🔥 Submit handler
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      // Upload files in parallel (faster & safer)
+      const [imageUrl, pdfUrl] = await Promise.all([
+        bookData.image ? uploadToCloudinary(bookData.image) : null,
+        bookData.pdf ? uploadToCloudinary(bookData.pdf) : null,
+      ])
+
+      // Send email with links
+      await emailjs.send(
+        "service_2a77gem", // from EmailJS
+        "template_42ltipp", // from EmailJS
+        {
+          name: bookData.name,
+          author: bookData.author,
+          category: bookData.category,
+          description: bookData.description,
+          pdfLink: pdfUrl || "No file uploaded",
+          imageLink: imageUrl || "No image uploaded",
+        },
+        "R5ELlKbvKNhoRhHuq" // from EmailJS
+      )
+      console.log(bookData)
+
+      toast.success("Book submitted successfully ✅")
+      resetForm()
+    } catch (err) {
+      console.error("Error:", err)
+      toast.error("Failed to send ❌")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="w-full rounded-lg p-6">
@@ -257,14 +258,48 @@ async function handleSubmit(e) {
         <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
             type="submit"
-            className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+            disabled={loading}
+            className={`flex-1 px-4 py-2 rounded-md transition-colors flex items-center justify-center ${
+              loading
+                ? "bg-blue-300 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600 text-white"
+            }`}
           >
-            Send to Email
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+            ) : (
+              "Send to Email"
+            )}
           </button>
+
           <button
             type="button"
             onClick={resetForm}
-            className="flex-1 sm:flex-none border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
+            disabled={loading}
+            className={`flex-1 sm:flex-none border px-4 py-2 rounded-md transition-colors ${
+              loading
+                ? "border-gray-200 text-gray-400 cursor-not-allowed"
+                : "border-gray-300 hover:bg-gray-100"
+            }`}
           >
             Reset Form
           </button>

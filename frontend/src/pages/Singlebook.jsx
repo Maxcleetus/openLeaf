@@ -8,6 +8,7 @@ const Singlebook = () => {
   const { details } = useAppContext()
   const [oneBook, setOneBook] = useState([])
   const [relBook, setRelBook] = useState([])
+  const [loadingDownload, setLoadingDownload] = useState(false) // ✅ new state
 
   function getOneBook() {
     let book = details.filter(item => item._id == bookid)
@@ -21,19 +22,27 @@ const Singlebook = () => {
     setRelBook(rel)
   }
 
-  // download handler
-  function handleDownload(url, name) {
-    fetch(url)
-      .then(res => res.blob())
-      .then(blob => {
-        const link = document.createElement("a")
-        link.href = URL.createObjectURL(blob)
-        link.download = `${name || "file"}.pdf` // force pdf extension
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-      })
-      .catch(err => console.error("Download failed:", err))
+  // download handler with loading
+  async function handleDownload(url, name) {
+    setLoadingDownload(true)
+    try {
+      const res = await fetch(url)
+      if (!res.ok) throw new Error("Network response was not ok")
+      const blob = await res.blob()
+      const fileURL = window.URL.createObjectURL(new Blob([blob], { type: "application/pdf" }))
+      const link = document.createElement("a")
+      link.href = fileURL
+      link.setAttribute("download", `${name || "file"}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      setTimeout(() => window.URL.revokeObjectURL(fileURL), 1000)
+    } catch (err) {
+      console.error("Download failed:", err)
+      alert("Download failed! Please try again.")
+    } finally {
+      setLoadingDownload(false)
+    }
   }
 
   // details of one book
@@ -79,12 +88,39 @@ const Singlebook = () => {
           </div>
 
           {/* Download button */}
-          <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center mt-3">
             <button
               onClick={() => handleDownload(item.pdf, item.name)}
-              className="bg-[#035DCA]/80 px-2 py-1 md:px-3 md:py-2 rounded-lg text-white font-medium"
+              disabled={loadingDownload} // disable while loading
+              className={`bg-[#035DCA]/80 px-2 py-1 md:px-3 md:py-2 rounded-lg text-white font-medium flex items-center justify-center gap-2 ${loadingDownload ? "cursor-not-allowed opacity-70" : ""}`}
             >
-              Download
+              {loadingDownload ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 108 8h-4l3 3 3-3h-4z"
+                    ></path>
+                  </svg>
+                  Downloading...
+                </>
+              ) : (
+                "Download"
+              )}
             </button>
           </div>
         </div>
