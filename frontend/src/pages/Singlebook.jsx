@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Singlebook = () => {
   const navigate = useNavigate()
@@ -8,57 +10,65 @@ const Singlebook = () => {
   const { details } = useAppContext()
   const [oneBook, setOneBook] = useState([])
   const [relBook, setRelBook] = useState([])
-  const [loadingDownload, setLoadingDownload] = useState(false) // ✅ new state
+  const [loadingDownload, setLoadingDownload] = useState(false)
 
+  // Get single book details
   function getOneBook() {
-    let book = details.filter(item => item._id == bookid)
+    const book = details.filter(item => item._id === bookid)
     setOneBook(book)
   }
 
+  // Get related books
   function relatedBooks() {
-    let rel = details.filter(
+    if (oneBook.length === 0) return
+    const rel = details.filter(
       book => book.category === oneBook[0].category && book._id !== oneBook[0]._id
     )
     setRelBook(rel)
   }
 
-  // download handler with loading
+  // Download handler with loading & toast
   async function handleDownload(url, name) {
+    if (!url) return toast.error("No file available to download")
     setLoadingDownload(true)
+
     try {
-      const res = await fetch(url)
+      const res = await fetch(url, { mode: 'cors' })
       if (!res.ok) throw new Error("Network response was not ok")
       const blob = await res.blob()
-      const fileURL = window.URL.createObjectURL(new Blob([blob], { type: "application/pdf" }))
+      const blobUrl = window.URL.createObjectURL(blob)
+
       const link = document.createElement("a")
-      link.href = fileURL
-      link.setAttribute("download", `${name || "file"}.pdf`)
+      link.href = blobUrl
+      link.download = `${name || "file"}.pdf`
       document.body.appendChild(link)
       link.click()
       link.remove()
-      setTimeout(() => window.URL.revokeObjectURL(fileURL), 1000)
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000)
+
+      toast.success("Book downloaded successfully ✅")
     } catch (err) {
       console.error("Download failed:", err)
-      alert("Download failed! Please try again.")
+      window.open(url, "_blank")
+      toast.error("Download failed! Opened in new tab instead ❌")
     } finally {
       setLoadingDownload(false)
     }
   }
 
-  // details of one book
+  // Effects
   useEffect(() => {
     getOneBook()
-  }, [bookid])
+  }, [bookid, details])
 
-  // filter related books
   useEffect(() => {
-    if (oneBook.length > 0) {
-      relatedBooks()
-    }
+    relatedBooks()
   }, [oneBook])
 
   return (
-    <div>
+    <div className="px-4 md:px-12 lg:px-24">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
       {oneBook.map((item) => (
         <div key={item._id}>
           <div className='flex md:pt-10 md:pb-5 pb-3 flex-col md:flex-row md:gap-12'>
@@ -67,6 +77,7 @@ const Singlebook = () => {
                 <img className='w-[300px] h-[400px] rounded-lg' src={item.image} alt={item.name} />
               </div>
             </div>
+
             <div className='md:border-3 md:bg-white/30 md:border-[#035DCA]/80 w-full md:flex-1 rounded-lg'>
               <div className='flex flex-col items-center'>
                 <h1 className='text-xl md:text-3xl font-bold my-2 text-[#1E2939] border-b-1 md:border-b-2 border-[#035DCA]/60 text-center'>
@@ -91,8 +102,8 @@ const Singlebook = () => {
           <div className="w-full flex justify-center mt-3">
             <button
               onClick={() => handleDownload(item.pdf, item.name)}
-              disabled={loadingDownload} // disable while loading
-              className={`bg-[#035DCA]/80 px-2 py-1 md:px-3 md:py-2 rounded-lg text-white font-medium flex items-center justify-center gap-2 ${loadingDownload ? "cursor-not-allowed opacity-70" : ""}`}
+              disabled={loadingDownload}
+              className={`bg-[#035DCA]/80 px-3 py-2 rounded-lg text-white font-medium flex items-center justify-center gap-2 ${loadingDownload ? "cursor-not-allowed opacity-70" : ""}`}
             >
               {loadingDownload ? (
                 <>
@@ -126,15 +137,16 @@ const Singlebook = () => {
         </div>
       ))}
 
+      {/* Related Books */}
       <h1 className='text-2xl md:text-3xl font-bold my-4 text-[#1E2939] text-center'>
         Related Books
       </h1>
-      <div className='flex overflow-x-scroll scrollbar-hidden gap-6'>
+      <div className='flex overflow-x-scroll scrollbar-hidden gap-6 pb-8'>
         {relBook.map((item) => (
           <div
             key={item._id}
             className="min-w-[200px] cursor-pointer"
-            onClick={() => ( window.scrollTo(0,0), navigate(`/singlebook/${item._id}`))}
+            onClick={() => (window.scrollTo(0,0), navigate(`/singlebook/${item._id}`))}
           >
             <img
               className='max-w-[200px] rounded-lg border-[#035DCA] p-1 bg-[#035DCA]/80'
