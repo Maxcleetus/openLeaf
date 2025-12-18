@@ -17,7 +17,7 @@ function AppRoutes() {
       }
 
       try {
-        const res = await fetch("https://backend-195k.onrender.com/api/common/auth", {
+        const res = await fetch("http://localhost:3000/api/common/auth", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

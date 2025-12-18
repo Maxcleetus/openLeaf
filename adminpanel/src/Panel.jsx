@@ -10,6 +10,21 @@ const categories = [
   "selfdev",
 ]
 
+// --- Helper function to convert a File object to a Base64 string ---
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      resolve(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
+
 export default function BookInputForm() {
   const [bookData, setBookData] = useState({
     name: "",
@@ -34,6 +49,9 @@ export default function BookInputForm() {
       const reader = new FileReader()
       reader.onload = (event) => setImagePreview(event.target?.result)
       reader.readAsDataURL(file)
+    } else {
+      setBookData((prev) => ({ ...prev, image: null }))
+      setImagePreview(null)
     }
   }
 
@@ -42,6 +60,9 @@ export default function BookInputForm() {
     if (file) {
       setBookData((prev) => ({ ...prev, pdf: file }))
       setPdfName(file.name)
+    } else {
+      setBookData((prev) => ({ ...prev, pdf: null }))
+      setPdfName("")
     }
   }
 
@@ -59,46 +80,67 @@ export default function BookInputForm() {
     setPdfName("")
   }
 
+  // --- MODIFIED SUBMIT HANDLER FOR BASE64 JSON PAYLOAD ---
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    // Prepare form data for files + text
-    const formData = new FormData();
-    formData.append("name", bookData.name);
-    formData.append("image", bookData.image);
-    formData.append("pdf", bookData.pdf);
-    formData.append("description", bookData.description);
-    formData.append("author", bookData.author);
-    formData.append("category", bookData.category);
+    try {
+      // 1. Convert files to Base64 strings
+      const base64Image = await fileToBase64(bookData.image);
+      const base64Pdf = await fileToBase64(bookData.pdf);
 
-    // Get token (adjust based on your auth flow)
-    const token = localStorage.getItem("token"); 
+      // 2. Prepare the JSON data payload
+      const payload = {
+        name: bookData.name,
+        // Send the Base64 strings instead of File objects
+        image: base64Image, 
+        pdf: base64Pdf,
+        description: bookData.description,
+        author: bookData.author,
+        category: bookData.category,
+      };
 
-    // Send to backend
-    const response = await fetch("https://backend-195k.onrender.com/api/common/addBook", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`, // Send token for authentication
-      },
-      body: formData // Send FormData instead of plain object
-    });
+      // Get token (adjust based on your auth flow)
+      const token = localStorage.getItem("token"); 
 
-    if (!response.ok) {
-      throw new Error(`Failed to upload book: ${response.status}`);
+      // 3. Send to backend with Content-Type: application/json
+      const response = await fetch("http://localhost:3000/api/common/addBook", {
+        method: "POST",
+        // CRITICAL: Set the header for JSON data
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
+        },
+        // CRITICAL: Send the JSON payload
+        body: JSON.stringify(payload) 
+      });
+
+      if (!response.ok) {
+        // Attempt to read error message from body for better toast
+        let errorMessage = `Failed to upload book: ${response.status}`;
+        try {
+            const errorBody = await response.json();
+            if (errorBody.message) {
+                errorMessage = errorBody.message;
+            }
+        } catch (e) {
+            // Ignore if body is not JSON
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      toast.success("Book upload successfully");
+      console.log("Book uploaded successfully:", data);
+
+      // Reset form after successful upload
+      resetForm();
+    } catch (error) {
+      console.error("Error uploading book:", error.message);
+      toast.error(`Upload failed: ${error.message}`);
     }
-
-    const data = await response.json();
-    toast.success("Book upload successfully");
-    console.log("Book uploaded successfully:", data);
-
-    // Reset form after successful upload
-    resetForm();
-  } catch (error) {
-    console.error("Error uploading book:", error);
-  }
-};
-
+  };
+  // --- END OF MODIFIED SUBMIT HANDLER ---
 
 
   return (

@@ -1,11 +1,26 @@
 import React, { useState } from "react"
 import { Upload, BookOpen, FileText, User, Tag } from "lucide-react"
 import { toast } from "react-toastify"
-import emailjs from "emailjs-com"
 
 const categories = ["notes", "novel", "story", "code", "selfdev"]
 
+// --- Helper function to convert a File object to a Base64 string ---
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      resolve(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
+
 export default function Contact() {
+
   const [bookData, setBookData] = useState({
     name: "",
     image: null,
@@ -17,7 +32,6 @@ export default function Contact() {
 
   const [imagePreview, setImagePreview] = useState(null)
   const [pdfName, setPdfName] = useState("")
-  const [loading, setLoading] = useState(false)
 
   const handleInputChange = (field, value) => {
     setBookData((prev) => ({ ...prev, [field]: value }))
@@ -30,6 +44,9 @@ export default function Contact() {
       const reader = new FileReader()
       reader.onload = (event) => setImagePreview(event.target?.result)
       reader.readAsDataURL(file)
+    } else {
+      setBookData((prev) => ({ ...prev, image: null }))
+      setImagePreview(null)
     }
   }
 
@@ -38,8 +55,12 @@ export default function Contact() {
     if (file) {
       setBookData((prev) => ({ ...prev, pdf: file }))
       setPdfName(file.name)
+    } else {
+      setBookData((prev) => ({ ...prev, pdf: null }))
+      setPdfName("")
     }
   }
+
 
   const resetForm = () => {
     setBookData({
@@ -54,78 +75,68 @@ export default function Contact() {
     setPdfName("")
   }
 
-  // 🔥 Upload file to Cloudinary
-  async function uploadToCloudinary(file) {
-    if (!file) return null
-
-    const formData = new FormData()
-    formData.append("file", file)
-    formData.append("upload_preset", "maxcleetus") // your preset
-
-    // Detect resource type (image vs pdf/other files)
-    let resourceType = "image"
-    if (file.type === "application/pdf" || file.type.startsWith("application/")) {
-      resourceType = "raw"
-    }
-
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/duzg93hdg/${resourceType}/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    )
-
-    const data = await res.json()
-    console.log(data)
-
-    if (!res.ok) {
-      throw new Error(data.error?.message || "Upload failed")
-    }
-
-    return data.secure_url // ✅ always return URL string
-  }
-
-  // 🔥 Submit handler
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
+  // --- MODIFIED SUBMIT HANDLER ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     try {
-      // Upload files in parallel (faster & safer)
-      const [imageUrl, pdfUrl] = await Promise.all([
-        bookData.image ? uploadToCloudinary(bookData.image) : null,
-        bookData.pdf ? uploadToCloudinary(bookData.pdf) : null,
-      ])
+      // 1. Convert files to Base64 strings
+      const base64Image = await fileToBase64(bookData.image);
+      const base64Pdf = await fileToBase64(bookData.pdf);
 
-      // Send email with links
-      await emailjs.send(
-        "service_2a77gem", // from EmailJS
-        "template_42ltipp", // from EmailJS
-        {
-          name: bookData.name,
-          author: bookData.author,
-          category: bookData.category,
-          description: bookData.description,
-          pdfLink: pdfUrl || "No file uploaded",
-          imageLink: imageUrl || "No image uploaded",
+      // 2. Prepare the JSON data payload
+      const payload = {
+        name: bookData.name,
+        // Send the Base64 strings instead of File objects
+        image: base64Image, 
+        pdf: base64Pdf,
+        description: bookData.description,
+        author: bookData.author,
+        category: bookData.category,
+      };
+
+
+      // 3. Send to backend with Content-Type: application/json
+      const response = await fetch("http://localhost:3000/api/common/addBook", {
+        method: "POST",
+        // CRITICAL: Set the header for JSON data
+        headers: { 
+          "Content-Type": "application/json",
         },
-        "R5ELlKbvKNhoRhHuq" // from EmailJS
-      )
-      console.log(bookData)
+        // CRITICAL: Send the JSON payload
+        body: JSON.stringify(payload) 
+      });
 
-      toast.success("Book submitted successfully ✅")
-      resetForm()
-    } catch (err) {
-      console.error("Error:", err)
-      toast.error("Failed to send ❌")
-    } finally {
-      setLoading(false)
+      if (!response.ok) {
+        // Attempt to read error message from body if available
+        let errorMessage = `Failed to upload book: ${response.status}`;
+        try {
+            const errorBody = await response.json();
+            if (errorBody.message) {
+                errorMessage = errorBody.message;
+            }
+        } catch (e) {
+            // Ignore if body is not JSON
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      toast.success("Book uploaded successfully");
+      console.log("Book uploaded successfully:", data);
+
+      // Reset form after successful upload
+      resetForm();
+    } catch (error) {
+      console.error("Error uploading book:", error.message);
+      toast.error(`Upload failed: ${error.message}`);
     }
-  }
+  };
+  // --- END OF MODIFIED SUBMIT HANDLER ---
+
 
   return (
-    <div className="w-full rounded-lg p-6">
+    <div className="w-full border border-gray-200 rounded-lg shadow p-6 bg-white">
       {/* Header */}
       <div className="flex items-center gap-2 mb-6">
         <BookOpen className="h-5 w-5 text-blue-600" />
@@ -258,48 +269,14 @@ export default function Contact() {
         <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
             type="submit"
-            disabled={loading}
-            className={`flex-1 px-4 py-2 rounded-md transition-colors flex items-center justify-center ${
-              loading
-                ? "bg-blue-300 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600 text-white"
-            }`}
+            className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
           >
-            {loading ? (
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                ></path>
-              </svg>
-            ) : (
-              "Send to Email"
-            )}
+            Add Book
           </button>
-
           <button
             type="button"
             onClick={resetForm}
-            disabled={loading}
-            className={`flex-1 sm:flex-none border px-4 py-2 rounded-md transition-colors ${
-              loading
-                ? "border-gray-200 text-gray-400 cursor-not-allowed"
-                : "border-gray-300 hover:bg-gray-100"
-            }`}
+            className="flex-1 sm:flex-none border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
           >
             Reset Form
           </button>

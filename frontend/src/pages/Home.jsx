@@ -64,20 +64,26 @@ const Home = () => {
         </div>
         <div>
           <div className="flex scrollbar-hidden items-center justify-start md:justify-center overflow-x-scroll gap-6 py-4 md:py-6 md:mb-5">
-            <div onClick={() => navigate(`/allbook/story`)}>
-              <Circle category="story" />
+            <div onClick={() => navigate(`/allbook/cse`)}>
+              <Circle category="cse" />
             </div>
-            <div onClick={() => navigate(`/allbook/code`)}>
-              <Circle category="code" />
+            <div onClick={() => navigate(`/allbook/eee`)}>
+              <Circle category="eee" />
             </div>
-            <div onClick={() => navigate(`/allbook/notes`)}>
-              <Circle category="notes" />
+            <div onClick={() => navigate(`/allbook/ec`)}>
+              <Circle category="ec" />
             </div>
-            <div onClick={() => navigate(`/allbook/selfdev`)}>
-              <Circle category="selfdev" />
+            <div onClick={() => navigate(`/allbook/robo`)}>
+              <Circle category="robo" />
             </div>
-            <div onClick={() => navigate(`/allbook/novel`)}>
-              <Circle category="novel" />
+            <div onClick={() => navigate(`/allbook/civil`)}>
+              <Circle category="civil" />
+            </div>
+            <div onClick={() => navigate(`/allbook/mech`)}>
+              <Circle category="mech" />
+            </div>
+            <div onClick={() => navigate(`/allbook/other`)}>
+              <Circle category="other" />
             </div>
           </div>
         </div>

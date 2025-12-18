@@ -3,25 +3,42 @@ import { cloudinary } from "./coludinary.js";
 
 const addBook = async (req, res) => {
   try {
-    const { name, description, author, category } = req.body;
-    console.log("Adding book:", name, description, author, category);
+    // 1. Destructure all fields directly from req.body (including Base64 strings)
+    const { name, image, pdf, description, author, category } = req.body;
+    
+    // NOTE: The 'image' and 'pdf' variables now hold the Base64 strings 
+    // (e.g., "data:image/jpeg;base64,...") sent from the frontend.
 
-    // Upload image to Cloudinary
-    const imageResult = await cloudinary.uploader.upload(req.files.image[0].path, {
-      folder: "books/images",
-    });
+    console.log(`Adding book: ${name}, Author: ${author}, Category: ${category}`);
 
-    // Upload PDF to Cloudinary
-    const pdfResult = await cloudinary.uploader.upload(req.files.pdf[0].path, {
-      folder: "books/pdfs",
-      resource_type: "raw",
-    });
+    // --- Cloudinary Uploads using Base64 Data ---
 
-    // Save book details in MongoDB
+    let imageSecureUrl = null;
+    if (image) {
+      // 2. Upload image using the Base64 string data. Cloudinary handles the data URL format.
+      const imageResult = await cloudinary.uploader.upload(image, {
+        folder: "books/images",
+      });
+      imageSecureUrl = imageResult.secure_url;
+    }
+
+    let pdfSecureUrl = null;
+    if (pdf) {
+      // 2. Upload PDF using the Base64 string data. 
+      // resource_type: "raw" is correct for PDFs.
+      const pdfResult = await cloudinary.uploader.upload(pdf, {
+        folder: "books/pdfs",
+        resource_type: "raw", // Use 'raw' for non-image/non-video files like PDF
+      });
+      pdfSecureUrl = pdfResult.secure_url;
+    }
+
+    // --- Save to MongoDB ---
     const newBook = new Book({
       name,
-      image: imageResult.secure_url,
-      pdf: pdfResult.secure_url,
+      // Use the secure URLs obtained from Cloudinary
+      image: imageSecureUrl,
+      pdf: pdfSecureUrl,
       description,
       author,
       category,
@@ -31,7 +48,7 @@ const addBook = async (req, res) => {
     res.status(201).json({ message: "✅ Book added successfully", book: newBook });
   } catch (error) {
     console.error("❌ Error adding book:", error.message);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error: Failed to process book upload." });
   }
 };
 

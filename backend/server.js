@@ -13,8 +13,8 @@ const app = e();
 
 
 app.use(cors());
-app.use(e.json());
 app.use(e.urlencoded({ extended: true }));
+app.use(e.json({ limit: '50mb' }));
 
 app.use('/api/common',adminRoute)
 

@@ -13,8 +13,6 @@ const upload = multer({ dest: "uploads/" });
 
 router.post(
   "/addBook",
-  verifyAdminToken,
-  upload.fields([{ name: "image", maxCount: 1 }, { name: "pdf", maxCount: 1 }]),
   addBook
 );
 

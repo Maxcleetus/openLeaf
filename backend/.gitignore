@@ -1,0 +1,35 @@
+# --- Dependencies and Build Artifacts ---
+/node_modules
+/dist
+/build
+/out
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# --- Environment and Credentials (CRITICAL) ---
+# This file MUST NOT be committed as it contains the GEMINI_API_KEY
+.env
+.env.local
+.env.*.local
+
+# Service Account and specific credential files (if used)
+credentials.json
+service_account.json
+
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
+
+# --- IDE/Editor Files ---
+# Visual Studio Code
+.vscode/
+
+# JetBrains/WebStorm
+.idea/
+*.iws
+*.iml
+*.ipr
