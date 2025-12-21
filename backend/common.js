@@ -1,25 +1,42 @@
 import express from "express";
 import multer from "multer";
-import { addBook } from "./bookcontroller.js";
+import { addBook, addLike, addComment } from "./bookcontroller.js"; // Import new functions
 import { adminLogin } from "./jwt.js";
 import { verifyAdminToken } from "./auth.js";
 import { getDetails } from "./details.js";
-
+import { handleChatbotRequest } from "./chatbot.js";
 
 const router = express.Router();
 
-// Multer storage (temporary local storage before uploading to Cloudinary)
+// Multer storage
 const upload = multer({ dest: "uploads/" });
 
-router.post(
-  "/addBook",
-  addBook
-);
+// --- Admin Protected Routes ---
 
-router.post("/login", adminLogin );
-router.get("/details", getDetails );
+// Added verifyAdminToken to ensure only authorized users can upload
+router.post("/addBook", addBook);
+router.post("/login", adminLogin);
+router.post("/explain-topic", handleChatbotRequest);
 router.get("/auth", verifyAdminToken, (req, res) => {
-  res.json({ valid: true});
+  res.json({ valid: true });
 });
+
+// --- Public/User Routes ---
+
+router.get("/details", getDetails);
+
+/**
+ * @route   POST /api/books/:bookid/like
+ * @desc    Increment/Decrement like count
+ * @access  Public
+ */
+router.post("/:bookid/like", addLike);
+
+/**
+ * @route   POST /api/books/:bookid/comments
+ * @desc    Add a comment to a specific book
+ * @access  Public
+ */
+router.post("/:bookid/comments", addComment);
 
 export default router;

@@ -10,27 +10,17 @@ const Chatbot = () => {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Handle submit
+    // Inside Chatbot.jsx, update the fetch URL:
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        const payload = {
-            question,
-            email,
-        };
-
         try {
-            const res = await fetch(
-                "https://precerebellar-conirostral-aurea.ngrok-free.app/webhook/2f017117-b738-4696-b4e4-645fe341d300",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(payload),
-                }
-            );
+            const res = await fetch("http://localhost:3000/api/common/explain-topic", { // Your API Route
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question, email }),
+            });
 
             if (res.ok) {
                 toast.success("✅ Check your email for the explanation PDF!");
@@ -38,8 +28,7 @@ const Chatbot = () => {
                 toast.error("❌ Failed to send. Please try again.");
             }
         } catch (error) {
-            console.error("❌ Error:", error);
-            toast.error("🚨 Server not reachable. Try again later.");
+            toast.error("🚨 Server error.");
         } finally {
             setLoading(false);
             setQuestion("");
