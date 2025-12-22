@@ -11,6 +11,8 @@ import "react-toastify/dist/ReactToastify.css"
 import { ToastContainer } from "react-toastify"
 import { useAppContext } from './context/AppContext'
 import Chatbot from './components/Chatbot'
+import Discusions from './pages/Discusions'
+import DiscussionDetail from './pages/DiscussionDetail'
 
 const App = () => {
   const {loading} = useAppContext()
@@ -25,6 +27,8 @@ const App = () => {
         <Route path='/contact' element={<Contact/>}/>
         <Route path='/allbook' element={<Allbooks/>}/>
         <Route path='/allbook/:cat/' element={<Allbooks/>}/>
+        <Route path='/discuss' element={<Discusions/>}/>
+        <Route path="/discuss/:id" element={<DiscussionDetail/>} />
         <Route path='/allbook/:cat/:subcat' element={<Allbooks/>}/>
         <Route path='/singlebook/:bookid' element={<Singlebook/>}/>
       </Routes>

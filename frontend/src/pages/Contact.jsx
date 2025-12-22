@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { Upload, BookOpen, FileText, User, Tag, GraduationCap, Linkedin } from "lucide-react" // Added Linkedin icon
 import { toast } from "react-toastify"
 
-const categories = ['cse','eee','ec','civil','mech','other']
+const categories = ['cse','eee','ec','robo','civil','mech','other']
 const semesters = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
 
 const fileToBase64 = (file) => {
@@ -116,7 +116,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="w-full border border-gray-200 rounded-lg shadow p-6 bg-white">
+    <div className="w-full rounded-lg shadow p-6">
       <div className="flex items-center gap-2 mb-6">
         <BookOpen className="h-5 w-5 text-blue-600" />
         <h2 className="text-lg font-semibold">Add New Book & Author Profile</h2>
@@ -223,7 +223,7 @@ export default function Contact() {
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-2">
             <label className="text-sm font-medium">Book Cover Image</label>
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-blue-50 hover:bg-gray-50">
                 {imagePreview ? <img src={imagePreview} className="w-full h-full object-cover rounded-lg" alt="Preview" /> : <Upload className="text-gray-400" />}
                 <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
             </label>
@@ -231,7 +231,7 @@ export default function Contact() {
 
           <div className="space-y-2">
             <label className="text-sm font-medium flex items-center gap-2"><FileText className="h-4 w-4" /> PDF File</label>
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-blue-50 hover:bg-gray-50">
                 <FileText className="w-8 h-8 mb-2 text-gray-400" />
                 <span className="text-xs text-center px-2">{pdfName || "Upload PDF"}</span>
                 <input type="file" accept=".pdf" onChange={handlePdfChange} className="hidden" />

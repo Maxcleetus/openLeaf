@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { addBook, addLike, addComment } from "./bookcontroller.js"; // Import new functions
+import { addBook, addLike, addComment, deleteBookComment, deleteBook, updateBook, updateComment } from "./bookcontroller.js"; // Import new functions
 import { adminLogin } from "./jwt.js";
 import { verifyAdminToken } from "./auth.js";
 import { getDetails } from "./details.js";
@@ -20,7 +20,10 @@ router.post("/explain-topic", handleChatbotRequest);
 router.get("/auth", verifyAdminToken, (req, res) => {
   res.json({ valid: true });
 });
-
+router.put("/book/:id", updateBook);
+router.put("/book/:bookId/comment/:commentId", updateComment);
+router.delete("/book/:id", deleteBook);
+router.delete("/book/:bookId/comment/:commentId", deleteBookComment);
 // --- Public/User Routes ---
 
 router.get("/details", getDetails);

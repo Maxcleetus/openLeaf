@@ -52,6 +52,7 @@ const Allbooks = () => {
               { id: 'cse', name: 'Computer Science' },
               { id: 'eee', name: 'Electrical' },
               { id: 'ec', name: 'Electronics' },
+              { id: 'robo', name: 'Robotics' },
               { id: 'civil', name: 'Civil' },
               { id: 'mech', name: 'Mechanical' },
               { id: 'other', name: 'Others' }
@@ -110,6 +111,19 @@ const Allbooks = () => {
                       <p
                         key={sem}
                         onClick={() => subcat === sem ? navigate('/allbook/civil') : navigate(`/allbook/civil/${sem}`)}
+                        className={`text-center text-xs py-1.5 border rounded-md cursor-pointer ${subcat === sem ? 'bg-blue-50 border-blue-400 text-blue-600' : 'bg-gray-50 text-gray-500'}`}
+                      >
+                        {sem}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                {cat === 'robo' && item.id === 'robo' && (
+                  <div className=' mt-2 grid grid-cols-2 gap-2 animate-in fade-in duration-300'>
+                    {semesters.map((sem) => (
+                      <p
+                        key={sem}
+                        onClick={() => subcat === sem ? navigate('/allbook/robo') : navigate(`/allbook/robo/${sem}`)}
                         className={`text-center text-xs py-1.5 border rounded-md cursor-pointer ${subcat === sem ? 'bg-blue-50 border-blue-400 text-blue-600' : 'bg-gray-50 text-gray-500'}`}
                       >
                         {sem}
