@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 import { addBook, addLike, addComment, deleteBookComment, deleteBook, updateBook, updateComment } from "./bookcontroller.js"; // Import new functions
 import { adminLogin } from "./jwt.js";
 import { verifyAdminToken } from "./auth.js";
@@ -8,8 +7,7 @@ import { handleChatbotRequest } from "./chatbot.js";
 
 const router = express.Router();
 
-// Multer storage
-const upload = multer({ dest: "uploads/" });
+
 
 // --- Admin Protected Routes ---
 
