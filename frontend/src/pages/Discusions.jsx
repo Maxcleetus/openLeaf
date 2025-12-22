@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 const discussionService = {
   // Create new discussion
   async createDiscussion(discussionData) {
-    const response = await fetch('http://localhost:3000/api/discussions', {
+    const response = await fetch('https://open-leaf.vercel.app/api/discussions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ const discussionService = {
   // Get all discussions
   async getDiscussions() {
     try {
-      const response = await fetch('http://localhost:3000/api/discussions');
+      const response = await fetch('https://open-leaf.vercel.app/api/discussions');
       
       if (!response.ok) {
         console.error('❌ Response not OK:', response.status, response.statusText);
@@ -70,7 +70,7 @@ const discussionService = {
   // Search discussions
   async searchDiscussions(query) {
     try {
-      const response = await fetch(`http://localhost:3000/api/discussions/search/${query}`);
+      const response = await fetch(`https://open-leaf.vercel.app/api/discussions/search/${query}`);
       
       if (!response.ok) {
         const error = await response.json();

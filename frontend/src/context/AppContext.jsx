@@ -11,7 +11,7 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/common/details"); // change URL to your backend
+        const res = await fetch("https://open-leaf.vercel.app/api/common/details"); // change URL to your backend
         console.log('Fetching details from backend:', res);
         if (!res.ok) {
           throw new Error("Failed to fetch details");

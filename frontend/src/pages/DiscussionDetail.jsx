@@ -17,7 +17,7 @@ const discussionDetailService = {
   async getDiscussionById(id) {
     try {
       console.log(`📡 Fetching discussion ${id} from backend...`);
-      const response = await fetch(`http://localhost:3000/api/discussions/${id}`);
+      const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${id}`);
       
       if (!response.ok) {
         console.error('❌ Response not OK:', response.status, response.statusText);
@@ -46,7 +46,7 @@ const discussionDetailService = {
   async addComment(discussionId, commentData) {
     try {
       console.log(`📤 Adding comment to discussion ${discussionId}:`, commentData);
-      const response = await fetch(`http://localhost:3000/api/discussions/${discussionId}/comments`, {
+      const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${discussionId}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ const discussionDetailService = {
   async upvoteDiscussion(discussionId) {
     try {
       console.log(`👍 Upvoting discussion ${discussionId}`);
-      const response = await fetch(`http://localhost:3000/api/discussions/${discussionId}/upvote`, {
+      const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${discussionId}/upvote`, {
         method: 'POST',
       });
       
@@ -109,7 +109,7 @@ const discussionDetailService = {
   async upvoteComment(discussionId, commentId) {
     try {
       console.log(`👍 Upvoting comment ${commentId} in discussion ${discussionId}`);
-      const response = await fetch(`http://localhost:3000/api/discussions/${discussionId}/comments/${commentId}/upvote`, {
+      const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${discussionId}/comments/${commentId}/upvote`, {
         method: 'POST',
       });
       

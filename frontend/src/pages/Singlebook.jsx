@@ -21,7 +21,7 @@ const Singlebook = () => {
   const [newComment, setNewComment] = useState('')
   const [showComments, setShowComments] = useState(false)
 
-  const API_BASE_URL = "http://localhost:3000/api/common"; 
+  const API_BASE_URL = "https://open-leaf.vercel.app/api/common"; 
 
   const getOneBook = async () => {
     const book = details.find(item => item._id === bookid)

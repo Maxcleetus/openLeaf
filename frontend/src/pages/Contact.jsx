@@ -93,7 +93,7 @@ export default function Contact() {
         linkedin: bookData.linkedin, // 3. Added LinkedIn to payload
       };
 
-      const response = await fetch("http://localhost:3000/api/common/addBook", {
+      const response = await fetch("https://open-leaf.vercel.app/api/common/addBook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload) 
