@@ -16,7 +16,7 @@ const Chatbot = () => {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:3000/api/common/explain-topic", { // Your API Route
+            const res = await fetch("https://open-leaf.vercel.app/api/common/explain-topic", { // Your API Route
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question, email }),
