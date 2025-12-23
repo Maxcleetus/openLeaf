@@ -17,7 +17,7 @@ function AppRoutes() {
       }
 
       try {
-        const res = await fetch("http://localhost:3000/api/common/auth", {
+        const res = await fetch("https://open-leaf.vercel.app/api/common/auth", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
