@@ -16,7 +16,7 @@ export default function AdminLogin() {
     setIsLoading(true)
 
     try {
-      const res = await fetch("http://localhost:3000/api/common/login", {
+      const res = await fetch("https://open-leaf.vercel.app/api/common/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
