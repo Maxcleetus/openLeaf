@@ -100,7 +100,7 @@ const Home = () => {
           </p>
         </div>
         <div className="grid gap-4 py-4 md:py-12 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {details.map((item, index) => {
+          {details?details.map((item, index) => {
             for (let i = 0; i < limit; i++) {
               if (index < limit) {
                 return (
@@ -116,7 +116,7 @@ const Home = () => {
                 );
               }
             }
-          })}
+          }):<div className='bold text-lg font-semibold '>Notes not found</div>}
         </div>
         <div className="flex items-center justify-center">
           <NavLink onClick={() => window.scrollTo(0, 0)} to="/allbook">

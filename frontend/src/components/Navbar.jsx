@@ -16,7 +16,9 @@ const Navbar = () => {
     <div>
       <div className='flex flex-col md:flex-row  justify-between md:items-center gap-4 py-4 '>
         <div className='flex items-center max-md:pr-1 justify-between md:block'>
-          <img className='w-32 md:w-40' src={logo} alt="" />
+          <NavLink onClick={() => setIsOpen(false)} to='/'>
+            <img className='w-32 md:w-40' src={logo} alt="" />
+          </NavLink>
           {isOpen ? <XIcon className='md:hidden fixed right-5 scale-130 text-[#035DCA] z-20' onClick={() => setIsOpen(false)} /> : <Menu onClick={() => setIsOpen(true)} className='md:hidden scale-130 text-[#035DCA]' />}
         </div>
         <div
@@ -52,7 +54,7 @@ const Navbar = () => {
             CONTRIBUTE
           </NavLink>
         </div>
-        <div onClick={()=>{setFocused(!focus);setFilter('');}}>
+        <div onClick={() => { setFocused(!focus); setFilter(''); }}>
           <div className='relative z-40'>
             {
               focus ? <div className=' fixed inset-0 bg-[#E9E9E9]'>
@@ -62,7 +64,7 @@ const Navbar = () => {
                     return filter.toLowerCase() === '' ? item : item.name.toLowerCase().includes(filter.toLowerCase())
                   }).slice(0, 20).map((item) => (
                     <div>
-                      <img onClick={() =>{ navigate(`/singlebook/${item._id} `); setFocused(false); setFilter('');} }  className='w-64 h-64 border-2 border-[#035DCA] rounded-lg' src={item.image} alt="" />
+                      <img onClick={() => { navigate(`/singlebook/${item._id} `); setFocused(false); setFilter(''); }} className='w-64 h-64 border-2 border-[#035DCA] rounded-lg' src={item.image} alt="" />
                     </div>
                   ))}
                 </div>

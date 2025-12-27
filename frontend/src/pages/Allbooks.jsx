@@ -152,7 +152,7 @@ const Allbooks = () => {
         {/* --- Books Display Grid --- */}
         <div className='flex-1'>
           <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-            {filter.length > 0 ? (
+            {filter ? (
               filter.map((item) => (
                 <div 
                   key={item._id} 

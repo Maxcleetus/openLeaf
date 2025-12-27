@@ -51,7 +51,7 @@ const Chatbot = () => {
 
                     {/* Note under header */}
                     <p className="text-xs text-center text-gray-500 mt-2">
-                        Available between <span className="font-semibold">7 PM – 8 PM</span>
+                        Ask about an <span className="font-semibold">Unknown Topic</span>
                     </p>
 
 
