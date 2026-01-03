@@ -14,8 +14,8 @@ const app = e();
 
 
 app.use(cors());
-app.use(e.json({ limit: '50mb' }));
-app.use(e.urlencoded({ limit: '50mb', extended: true }));
+app.use(e.json({ limit: '100mb' }));
+app.use(e.urlencoded({ limit: '100mb', extended: true }));
 app.use('/api/common',adminRoute)
 app.use('/api/discussions',discussionRoutes);
 
