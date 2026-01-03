@@ -353,7 +353,7 @@ export default function Contact() {
                   </>
                 ) : (
                   <>
-                    <span className="text-sm text-gray-500">Upload PDF file</span>
+                    <span className="text-sm text-gray-500">Upload PDF file [max 4.5 mb]</span>
                     <span className="text-xs text-gray-400 mt-1">Required field</span>
                   </>
                 )}
