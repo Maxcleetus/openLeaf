@@ -59,7 +59,7 @@ const Footer = () => {
       <hr className='text-gray-400 h-[1px]' />
       
       <div className="text-center text-gray-500 text-sm pt-3 pb-4">
-        &copy; 2025 ReadMe. All rights reserved.
+        &copy; 2026 ReadMe. All rights reserved.
       </div>
     </div>
   )

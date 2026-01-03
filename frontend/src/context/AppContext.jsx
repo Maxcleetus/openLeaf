@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [details, setDetails] = useState(null); // null until loaded
+  const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -11,13 +11,15 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const res = await fetch("https://open-leaf.vercel.app/api/common/details"); // change URL to your backend
-        console.log('Fetching details from backend:', res);
+        const res = await fetch("https://open-leaf.vercel.app/api/common/details");
         if (!res.ok) {
           throw new Error("Failed to fetch details");
         }
         const data = await res.json();
-        setDetails(data);
+        
+        // Reverse the data before setting it
+        const reversedData = Array.isArray(data) ? [...data].reverse() : data;
+        setDetails(reversedData);
       } catch (err) {
         setError(err.message);
       } finally {

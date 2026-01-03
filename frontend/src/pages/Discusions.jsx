@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  MessageSquare, 
-  ThumbsUp, 
-  User, 
-  Calendar, 
+import {
+  MessageSquare,
+  ThumbsUp,
+  User,
+  Calendar,
   Plus,
   Search,
   Eye,
@@ -24,7 +24,7 @@ const discussionService = {
       },
       body: JSON.stringify(discussionData),
     });
-    
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Failed to create discussion');
@@ -36,49 +36,53 @@ const discussionService = {
   async getDiscussions() {
     try {
       const response = await fetch('https://open-leaf.vercel.app/api/discussions');
-      
+
       if (!response.ok) {
         console.error('❌ Response not OK:', response.status, response.statusText);
         throw new Error(`Failed to fetch discussions: ${response.status} ${response.statusText}`);
       }
-      
+
       const result = await response.json();
-     
-      
+
+      let discussionsArray = [];
+
       // Your backend returns: { success: true, count: X, total: X, data: [...] }
       if (result.success && Array.isArray(result.data)) {
-        return result.data;
-      } 
+        discussionsArray = result.data;
+      }
       // Fallback: if data is directly an array
       else if (Array.isArray(result)) {
-        return result;
-      } 
+        discussionsArray = result;
+      }
       // If it's an object but data is array
       else if (result.data && Array.isArray(result.data)) {
-        return result.data;
+        discussionsArray = result.data;
       }
       else {
         console.error('❌ Unexpected response format:', result);
         return [];
       }
+
+      // Reverse the array before returning
+      return discussionsArray.reverse();
+
     } catch (error) {
       console.error('❌ Error in getDiscussions:', error);
       throw error;
     }
   },
-
   // Search discussions
   async searchDiscussions(query) {
     try {
       const response = await fetch(`https://open-leaf.vercel.app/api/discussions/search/${query}`);
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || 'Failed to search discussions');
       }
-      
+
       const result = await response.json();
-      
+
       // Handle the same response format as getAllDiscussions
       if (result.success && Array.isArray(result.data)) {
         return result.data;
@@ -111,7 +115,7 @@ const Discussions = () => {
   const [showTopicForm, setShowTopicForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const fileInputRef = useRef(null);
 
   // Load discussions on component mount
@@ -123,15 +127,15 @@ const Discussions = () => {
     try {
       setLoading(true);
       setError(null);
- 
-      
+
+
       const data = await discussionService.getDiscussions();
 
-      
+
       // Ensure data is an array
       if (Array.isArray(data)) {
         setTopics(data);
-        
+
       } else {
         console.error('❌ Data is not an array:', data);
         setTopics([]);
@@ -155,7 +159,7 @@ const Discussions = () => {
 
     try {
       setError(null);
-      
+
       // Prepare data to send to backend
       const discussionData = {
         title: newTopic.title,
@@ -170,12 +174,11 @@ const Discussions = () => {
         discussionData.image = newTopic.imagePreview;
       }
 
-      console.log('📤 Sending discussion data:', discussionData);
-      
+
       // Send to backend
       const response = await discussionService.createDiscussion(discussionData);
-      
-      
+
+
       // Extract the created discussion from response
       let createdTopic;
       if (response.data) {
@@ -185,23 +188,23 @@ const Discussions = () => {
       } else {
         createdTopic = response; // If backend returns the discussion directly
       }
-      
+
       // Update local state with new discussion
       setTopics(prevTopics => {
         const newTopics = [createdTopic, ...prevTopics];
-        
+
         return newTopics;
       });
-      
+
       // Reset form
-      setNewTopic({ 
-        title: '', 
-        content: '', 
-        authorName: '', 
+      setNewTopic({
+        title: '',
+        content: '',
+        authorName: '',
         authorEmail: '',
         tags: '',
-        image: null, 
-        imagePreview: null 
+        image: null,
+        imagePreview: null
       });
       setShowTopicForm(false);
     } catch (error) {
@@ -258,7 +261,7 @@ const Discussions = () => {
       try {
         setLoading(true);
         const results = await discussionService.searchDiscussions(query);
-        
+
         // Ensure results is an array
         const filteredResults = Array.isArray(results) ? results : [];
         setTopics(filteredResults);
@@ -272,14 +275,14 @@ const Discussions = () => {
   };
 
   // Always ensure filteredTopics is an array
-  const filteredTopics = Array.isArray(topics) 
-    ? (searchQuery.trim() === '' 
-        ? topics 
-        : topics.filter(topic => 
-            topic && topic.title && topic.content &&
-            (topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             topic.content.toLowerCase().includes(searchQuery.toLowerCase()))
-          ))
+  const filteredTopics = Array.isArray(topics)
+    ? (searchQuery.trim() === ''
+      ? topics
+      : topics.filter(topic =>
+        topic && topic.title && topic.content &&
+        (topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          topic.content.toLowerCase().includes(searchQuery.toLowerCase()))
+      ))
     : [];
 
   if (loading && topics.length === 0) {
@@ -306,7 +309,7 @@ const Discussions = () => {
                 <p className="text-gray-600 mt-1">Share ideas, photos, and learn together</p>
               </div>
             </div>
-            
+
             <div className="flex gap-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -336,7 +339,7 @@ const Discussions = () => {
           </div>
         )}
 
-        
+
 
         <div className="grid grid-cols-1 gap-6">
           {/* Posts List & Creation */}
@@ -356,15 +359,15 @@ const Discussions = () => {
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                
+
                 <form onSubmit={handleCreateTopic} className="space-y-4">
                   <div>
                     <input
                       type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Post title*"
+                      placeholder="Post title*(minimum 10 letters)"
                       value={newTopic.title}
-                      onChange={(e) => setNewTopic({...newTopic, title: e.target.value})}
+                      onChange={(e) => setNewTopic({ ...newTopic, title: e.target.value })}
                       required
                     />
                   </div>
@@ -375,23 +378,23 @@ const Discussions = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Your name (optional)"
                       value={newTopic.authorName}
-                      onChange={(e) => setNewTopic({...newTopic, authorName: e.target.value})}
+                      onChange={(e) => setNewTopic({ ...newTopic, authorName: e.target.value })}
                     />
                     <input
                       type="email"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Email (optional)"
                       value={newTopic.authorEmail}
-                      onChange={(e) => setNewTopic({...newTopic, authorEmail: e.target.value})}
+                      onChange={(e) => setNewTopic({ ...newTopic, authorEmail: e.target.value })}
                     />
                   </div>
 
                   <div>
                     <textarea
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[120px] resize-none"
-                      placeholder="What's on your mind?*"
+                      placeholder="What's on your mind?*(minimum 10 letters)"
                       value={newTopic.content}
-                      onChange={(e) => setNewTopic({...newTopic, content: e.target.value})}
+                      onChange={(e) => setNewTopic({ ...newTopic, content: e.target.value })}
                       required
                     />
                   </div>
@@ -402,7 +405,7 @@ const Discussions = () => {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Tags (comma separated, e.g., react, javascript)"
                       value={newTopic.tags}
-                      onChange={(e) => setNewTopic({...newTopic, tags: e.target.value})}
+                      onChange={(e) => setNewTopic({ ...newTopic, tags: e.target.value })}
                     />
                   </div>
 
@@ -410,9 +413,9 @@ const Discussions = () => {
                   <div className="space-y-3">
                     {newTopic.imagePreview ? (
                       <div className="relative">
-                        <img 
-                          src={newTopic.imagePreview} 
-                          alt="Preview" 
+                        <img
+                          src={newTopic.imagePreview}
+                          alt="Preview"
                           className="w-full h-48 object-cover rounded-lg"
                         />
                         <button
@@ -424,7 +427,7 @@ const Discussions = () => {
                         </button>
                       </div>
                     ) : (
-                      <div 
+                      <div
                         onClick={() => fileInputRef.current?.click()}
                         className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
                       >
@@ -433,7 +436,7 @@ const Discussions = () => {
                         <p className="text-sm text-gray-400 mt-1">Max 2MB • JPG, PNG, GIF, WebP</p>
                       </div>
                     )}
-                    
+
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -471,7 +474,7 @@ const Discussions = () => {
               <h2 className="text-xl font-bold text-gray-900">
                 Recent Posts ({filteredTopics.length})
               </h2>
-              
+
               {filteredTopics.length === 0 ? (
                 <div className="text-center py-12 bg-gray-100 rounded-lg border">
                   <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
@@ -483,11 +486,11 @@ const Discussions = () => {
                 filteredTopics.map((topic, index) => {
                   // Add defensive checks for each topic
                   if (!topic) return null;
-                  
+
                   const topicId = topic._id || topic.id || `temp-${index}`;
                   const authorName = topic.author?.name || topic.authorName || 'Anonymous';
                   const createdAt = topic.createdAt ? new Date(topic.createdAt) : new Date();
-                  
+
                   return (
                     <Link
                       key={topicId}
@@ -521,9 +524,9 @@ const Discussions = () => {
                           {/* Post Image */}
                           {topic.image && (
                             <div className="mb-4">
-                              <img 
-                                src={topic.image} 
-                                alt="Post" 
+                              <img
+                                src={topic.image}
+                                alt="Post"
                                 className="w-full h-48 object-cover rounded-lg"
                                 onError={(e) => {
                                   e.target.style.display = 'none';
@@ -532,7 +535,7 @@ const Discussions = () => {
                             </div>
                           )}
 
-                          
+
                         </div>
                       </div>
                     </Link>

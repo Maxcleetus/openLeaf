@@ -16,7 +16,6 @@ const discussionDetailService = {
   // Get single discussion by ID
   async getDiscussionById(id) {
     try {
-      console.log(`📡 Fetching discussion ${id} from backend...`);
       const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${id}`);
       
       if (!response.ok) {
@@ -25,7 +24,6 @@ const discussionDetailService = {
       }
       
       const result = await response.json();
-      console.log('✅ Discussion response:', result);
       
       // Extract data from response format
       if (result.success && result.data) {
@@ -45,7 +43,6 @@ const discussionDetailService = {
   // Add comment to discussion
   async addComment(discussionId, commentData) {
     try {
-      console.log(`📤 Adding comment to discussion ${discussionId}:`, commentData);
       const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${discussionId}/comments`, {
         method: 'POST',
         headers: {
@@ -60,7 +57,6 @@ const discussionDetailService = {
       }
       
       const result = await response.json();
-      console.log('✅ Add comment response:', result);
       
       // Return the updated discussion
       if (result.success && result.data) {
@@ -79,7 +75,6 @@ const discussionDetailService = {
   // Upvote discussion
   async upvoteDiscussion(discussionId) {
     try {
-      console.log(`👍 Upvoting discussion ${discussionId}`);
       const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${discussionId}/upvote`, {
         method: 'POST',
       });
@@ -90,7 +85,6 @@ const discussionDetailService = {
       }
       
       const result = await response.json();
-      console.log('✅ Upvote response:', result);
       
       if (result.success && result.data) {
         return result.data;
@@ -108,7 +102,6 @@ const discussionDetailService = {
   // Upvote comment
   async upvoteComment(discussionId, commentId) {
     try {
-      console.log(`👍 Upvoting comment ${commentId} in discussion ${discussionId}`);
       const response = await fetch(`https://open-leaf.vercel.app/api/discussions/${discussionId}/comments/${commentId}/upvote`, {
         method: 'POST',
       });
@@ -119,7 +112,6 @@ const discussionDetailService = {
       }
       
       const result = await response.json();
-      console.log('✅ Upvote comment response:', result);
       
       if (result.success && result.data) {
         return result.data;
@@ -162,10 +154,8 @@ const DiscussionDetail = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log(`🔄 Fetching discussion details for ID: ${id}`);
       
       const discussion = await discussionDetailService.getDiscussionById(id);
-      console.log('📥 Discussion loaded:', discussion);
       
       // Process the discussion data
       const processedTopic = {
@@ -178,7 +168,6 @@ const DiscussionDetail = () => {
       };
       
       setSelectedTopic(processedTopic);
-      console.log('✅ Discussion set in state');
     } catch (error) {
       console.error('❌ Error fetching discussion:', error);
       setError('Failed to load discussion: ' + error.message);
@@ -207,8 +196,6 @@ const DiscussionDetail = () => {
         authorEmail: newComment.authorEmail || '',
         image: newComment.imagePreview || null
       };
-
-      console.log('📤 Sending comment:', commentData);
       
       // Send to backend
       const updatedDiscussion = await discussionDetailService.addComment(
@@ -216,7 +203,6 @@ const DiscussionDetail = () => {
         commentData
       );
       
-      console.log('✅ Comment added, updated discussion:', updatedDiscussion);
       
       // Update state with the new discussion data
       const processedTopic = {
