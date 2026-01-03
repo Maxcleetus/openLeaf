@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   MessageSquare,
-  ThumbsUp,
   User,
   Calendar,
   Plus,
   Search,
-  Eye,
   X,
   Image as ImageIcon,
   Trash2
@@ -483,7 +481,7 @@ const Discussions = () => {
                   </p>
                 </div>
               ) : (
-                filteredTopics.map((topic, index) => {
+                filteredTopics.slice().reverse().map((topic, index) => {
                   // Add defensive checks for each topic
                   if (!topic) return null;
 

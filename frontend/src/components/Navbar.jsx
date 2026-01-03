@@ -65,6 +65,7 @@ const Navbar = () => {
                   }).slice(0, 20).map((item) => (
                     <div>
                       <img onClick={() => { navigate(`/singlebook/${item._id} `); setFocused(false); setFilter(''); }} className='w-64 h-64 border-2 border-[#035DCA] rounded-lg' src={item.image} alt="" />
+                      <p className='text-center'>{item.name}</p>
                     </div>
                   ))}
                 </div>
