@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Upload, BookOpen, FileText, User, Tag, GraduationCap, Linkedin, Loader2, Image as ImageIcon } from "lucide-react"
+import { Upload, BookOpen, FileText, User, Tag, GraduationCap, Linkedin, Loader2, Image as ImageIcon, CheckCircle } from "lucide-react"
 import { toast } from "react-toastify"
 
 const categories = ['cse','eee','ec','robo','civil','mech','other']
@@ -33,10 +33,12 @@ export default function Contact() {
     linkedin: "",
   })
 
-  const [imagePreview, setImagePreview] = useState(DEFAULT_BOOK_COVER) // Set default image
+  const [imagePreview, setImagePreview] = useState(DEFAULT_BOOK_COVER)
   const [pdfName, setPdfName] = useState("")
   const [loading, setLoading] = useState(false)
-  const [useDefaultCover, setUseDefaultCover] = useState(true) // Track if using default image
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadStep, setUploadStep] = useState("")
+  const [useDefaultCover, setUseDefaultCover] = useState(true)
 
   const handleInputChange = (field, value) => {
     setBookData((prev) => ({ ...prev, [field]: value }))
@@ -49,12 +51,12 @@ export default function Contact() {
       const reader = new FileReader()
       reader.onload = (event) => {
         setImagePreview(event.target?.result)
-        setUseDefaultCover(false) // User uploaded custom image
+        setUseDefaultCover(false)
       }
       reader.readAsDataURL(file)
     } else {
       setBookData((prev) => ({ ...prev, image: null }))
-      setImagePreview(DEFAULT_BOOK_COVER) // Reset to default
+      setImagePreview(DEFAULT_BOOK_COVER)
       setUseDefaultCover(true)
     }
   }
@@ -81,9 +83,11 @@ export default function Contact() {
       semester: "",
       linkedin: "",
     })
-    setImagePreview(DEFAULT_BOOK_COVER) // Reset to default
+    setImagePreview(DEFAULT_BOOK_COVER)
     setPdfName("")
     setUseDefaultCover(true)
+    setUploadProgress(0)
+    setUploadStep("")
   }
 
   const useDefaultBookCover = () => {
@@ -95,31 +99,54 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setUploadProgress(0);
+    setUploadStep("Starting upload...");
     
     try {
-      toast.info("Converting files, please wait...");
+      // Step 1: Validating form data
+      setUploadStep("Validating form data...");
+      setUploadProgress(10);
       
-      // If using default cover, we'll send the URL instead of converting to base64
+      if (!bookData.name || !bookData.author || !bookData.category || !bookData.semester || !bookData.pdf) {
+        throw new Error("Please fill all required fields");
+      }
+      
+      // Step 2: Converting image to base64
+      setUploadStep("Processing book cover...");
+      setUploadProgress(20);
+      
       let base64Image = null;
       if (bookData.image) {
+        toast.info("Converting image file...");
         base64Image = await fileToBase64(bookData.image);
       } else if (useDefaultCover) {
-        // For default cover, we can either:
-        // 1. Send the URL (backend needs to handle URL)
-        // 2. Or fetch and convert to base64
-        // Let's fetch and convert to be consistent
+        toast.info("Using default book cover...");
         try {
+          setUploadStep("Fetching default book cover...");
           const response = await fetch(DEFAULT_BOOK_COVER);
+          if (!response.ok) throw new Error("Failed to fetch default cover");
           const blob = await response.blob();
           base64Image = await fileToBase64(blob);
         } catch (err) {
-          // If fetch fails, send URL
+          console.warn("Could not fetch default cover, using URL:", err);
           base64Image = DEFAULT_BOOK_COVER;
         }
       }
       
+      // Step 3: Converting PDF to base64
+      setUploadStep("Processing PDF file...");
+      setUploadProgress(40);
+      toast.info("Converting PDF file...");
+      
       const base64Pdf = await fileToBase64(bookData.pdf);
-
+      if (!base64Pdf) {
+        throw new Error("Failed to process PDF file");
+      }
+      
+      // Step 4: Preparing payload
+      setUploadStep("Preparing upload data...");
+      setUploadProgress(60);
+      
       const payload = {
         name: bookData.name,
         image: base64Image, 
@@ -129,32 +156,57 @@ export default function Contact() {
         category: bookData.category,
         semester: bookData.semester,
         linkedin: bookData.linkedin,
-        useDefaultCover: useDefaultCover, // Let backend know if default cover was used
+        useDefaultCover: useDefaultCover,
       };
-
-      toast.info("Uploading book data...");
+      
+      // Step 5: Uploading to server
+      setUploadStep("Uploading to server...");
+      setUploadProgress(80);
+      toast.info("Uploading book data to server...");
       
       const response = await fetch("https://open-leaf.vercel.app/api/common/addBook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload) 
       });
+      
+      setUploadProgress(90);
 
       if (!response.ok) {
-        let errorMessage = `Failed to upload book: ${response.status}`;
+        let errorMessage = `Server error: ${response.status}`;
         try {
-            const errorBody = await response.json();
-            if (errorBody.message) errorMessage = errorBody.message;
-        } catch (e) {}
+          const errorBody = await response.json();
+          if (errorBody.message) errorMessage = errorBody.message;
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
         throw new Error(errorMessage);
       }
-
-      toast.success("Book and Author Profile uploaded successfully");
+      
+      // Step 6: Success
+      setUploadStep("Upload complete!");
+      setUploadProgress(100);
+      
+      toast.success("Book and Author Profile uploaded successfully!");
       resetForm();
+      
     } catch (error) {
+      console.error("Upload error:", error);
       toast.error(`Upload failed: ${error.message}`);
+      setUploadStep("Upload failed");
     } finally {
-      setLoading(false);
+      // Small delay before removing loading state to show completion
+      if (uploadProgress === 100) {
+        setTimeout(() => {
+          setLoading(false);
+          setUploadProgress(0);
+          setUploadStep("");
+        }, 1500);
+      } else {
+        setLoading(false);
+        setUploadProgress(0);
+        setUploadStep("");
+      }
     }
   };
 
@@ -405,13 +457,43 @@ export default function Contact() {
 
       {/* Loading overlay */}
       {loading && (
-        <div className="fixed inset-0 bg-black/10 backdrop-blur-[1px] flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-            <div className="text-center">
-              <p className="font-medium">Uploading Book</p>
-              <p className="text-sm text-gray-500">Please wait while we process your files...</p>
-            </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl flex flex-col items-center gap-6 min-w-[400px]">
+            {uploadProgress === 100 ? (
+              <>
+                <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle className="h-12 w-12 text-green-500" />
+                </div>
+                <div className="text-center">
+                  <p className="text-xl font-bold text-gray-800">Upload Complete!</p>
+                  <p className="text-gray-600 mt-2">Your book has been successfully uploaded.</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <Loader2 className="h-16 w-16 animate-spin text-blue-500" />
+                <div className="text-center w-full">
+                  <p className="text-lg font-semibold text-gray-800 mb-2">{uploadStep}</p>
+                  
+                  {/* Progress bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-3 mb-4 overflow-hidden">
+                    <div 
+                      className="bg-blue-500 h-3 rounded-full transition-all duration-300 ease-out"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                  
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>Uploading...</span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  
+                  <p className="text-sm text-gray-500 mt-4">
+                    Please wait while we process your files. This may take a moment.
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
