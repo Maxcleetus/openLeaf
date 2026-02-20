@@ -4,6 +4,8 @@ import { toast } from "react-toastify"
 
 const categories = ['cse','eee','ec','robo','civil','mech','other']
 const semesters = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
+const MAX_PDF_SIZE_MB = 3
+const MAX_IMAGE_SIZE_MB = 2
 
 // Default book cover image
 const DEFAULT_BOOK_COVER = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=500&fit=crop&auto=format"
@@ -47,6 +49,19 @@ export default function Contact() {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please upload a valid image file.")
+        e.target.value = ""
+        return
+      }
+
+      const maxImageSizeBytes = MAX_IMAGE_SIZE_MB * 1024 * 1024
+      if (file.size > maxImageSizeBytes) {
+        toast.error(`Image is too large. Max ${MAX_IMAGE_SIZE_MB} MB allowed.`)
+        e.target.value = ""
+        return
+      }
+
       setBookData((prev) => ({ ...prev, image: file }))
       const reader = new FileReader()
       reader.onload = (event) => {
@@ -64,6 +79,19 @@ export default function Contact() {
   const handlePdfChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (file.type !== "application/pdf") {
+        toast.error("Please upload a valid PDF file.")
+        e.target.value = ""
+        return
+      }
+
+      const maxPdfSizeBytes = MAX_PDF_SIZE_MB * 1024 * 1024
+      if (file.size > maxPdfSizeBytes) {
+        toast.error(`PDF is too large. Max ${MAX_PDF_SIZE_MB} MB allowed.`)
+        e.target.value = ""
+        return
+      }
+
       setBookData((prev) => ({ ...prev, pdf: file }))
       setPdfName(file.name)
     } else {
@@ -101,6 +129,7 @@ export default function Contact() {
     setLoading(true);
     setUploadProgress(0);
     setUploadStep("Starting upload...");
+    let uploadSucceeded = false;
     
     try {
       // Step 1: Validating form data
@@ -121,16 +150,7 @@ export default function Contact() {
         base64Image = await fileToBase64(bookData.image);
       } else if (useDefaultCover) {
         toast.info("Using default book cover...");
-        try {
-          setUploadStep("Fetching default book cover...");
-          const response = await fetch(DEFAULT_BOOK_COVER);
-          if (!response.ok) throw new Error("Failed to fetch default cover");
-          const blob = await response.blob();
-          base64Image = await fileToBase64(blob);
-        } catch (err) {
-          console.warn("Could not fetch default cover, using URL:", err);
-          base64Image = DEFAULT_BOOK_COVER;
-        }
+        base64Image = DEFAULT_BOOK_COVER;
       }
       
       // Step 3: Converting PDF to base64
@@ -173,6 +193,10 @@ export default function Contact() {
       setUploadProgress(90);
 
       if (!response.ok) {
+        if (response.status === 413) {
+          throw new Error("Upload is too large. Please use a smaller PDF.")
+        }
+
         let errorMessage = `Server error: ${response.status}`;
         try {
           const errorBody = await response.json();
@@ -186,9 +210,12 @@ export default function Contact() {
       // Step 6: Success
       setUploadStep("Upload complete!");
       setUploadProgress(100);
+      uploadSucceeded = true;
       
       toast.success("Book and Author Profile uploaded successfully!");
-      resetForm();
+      setTimeout(() => {
+        resetForm();
+      }, 1200);
       
     } catch (error) {
       console.error("Upload error:", error);
@@ -196,7 +223,7 @@ export default function Contact() {
       setUploadStep("Upload failed");
     } finally {
       // Small delay before removing loading state to show completion
-      if (uploadProgress === 100) {
+      if (uploadSucceeded) {
         setTimeout(() => {
           setLoading(false);
           setUploadProgress(0);
@@ -405,7 +432,7 @@ export default function Contact() {
                   </>
                 ) : (
                   <>
-                    <span className="text-sm text-gray-500">Upload PDF file [max 4.5 mb]</span>
+                    <span className="text-sm text-gray-500">{`Upload PDF file [max ${MAX_PDF_SIZE_MB} MB]`}</span>
                     <span className="text-xs text-gray-400 mt-1">Required field</span>
                   </>
                 )}
