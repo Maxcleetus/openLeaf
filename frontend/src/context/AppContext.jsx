@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [details, setDetails] = useState(null);
+  const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,7 +18,7 @@ export const AppProvider = ({ children }) => {
         const data = await res.json();
         
         // Reverse the data before setting it
-        const reversedData = Array.isArray(data) ? [...data].reverse() : data;
+        const reversedData = Array.isArray(data) ? [...data].reverse() : [];
         setDetails(reversedData);
       } catch (err) {
         setError(err.message);

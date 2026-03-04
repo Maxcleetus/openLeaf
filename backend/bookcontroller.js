@@ -1,19 +1,35 @@
 import Book from "./models/book.js";
 import { cloudinary } from "./coludinary.js";
 
+const DEFAULT_BOOK_COVER =
+  "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=500&fit=crop&auto=format";
+
 // --- Original Add Book Logic ---
 const addBook = async (req, res) => {
   try {
-    const { name, image, pdf, description, author, category, semester,linkedin} = req.body;
-    
-    let imageSecureUrl = null;
+    const { name, image, pdf, description, author, category, semester, linkedin } = req.body;
+
+    if (!name || !pdf) {
+      return res.status(400).json({ message: "Name and PDF are required." });
+    }
+
+    let imageSecureUrl = DEFAULT_BOOK_COVER;
     if (image) {
-      const imageResult = await cloudinary.uploader.upload(image, { folder: "books/images" });
-      imageSecureUrl = imageResult.secure_url;
+      if (typeof image === "string" && image.startsWith("http")) {
+        imageSecureUrl = image;
+      } else if (typeof image === "string" && image.startsWith("data:image")) {
+        const imageResult = await cloudinary.uploader.upload(image, { folder: "books/images" });
+        imageSecureUrl = imageResult.secure_url;
+      } else {
+        return res.status(400).json({ message: "Invalid image format." });
+      }
     }
 
     let pdfSecureUrl = null;
     if (pdf) {
+      if (typeof pdf !== "string" || (!pdf.startsWith("data:application/pdf") && !pdf.startsWith("http"))) {
+        return res.status(400).json({ message: "Invalid PDF format." });
+      }
       const pdfResult = await cloudinary.uploader.upload(pdf, {
         folder: "books/pdfs",
         resource_type: "raw", 
@@ -38,7 +54,10 @@ const addBook = async (req, res) => {
     res.status(201).json({ message: "✅ Book added successfully", book: newBook });
   } catch (error) {
     console.error("❌ Error adding book:", error.message);
-    res.status(500).json({ message: "Server Error: Failed to process book upload." });
+    if (error?.http_code === 413 || String(error?.message).toLowerCase().includes("too large")) {
+      return res.status(413).json({ message: "Uploaded files are too large. Reduce PDF/image size and try again." });
+    }
+    res.status(500).json({ message: "Server Error: Failed to process book upload.", error: error.message });
   }
 };
 

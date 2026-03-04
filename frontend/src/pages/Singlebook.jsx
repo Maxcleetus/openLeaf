@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import { toast, ToastContainer } from 'react-toastify'
@@ -23,7 +23,7 @@ const Singlebook = () => {
 
   const API_BASE_URL = "https://open-leaf.vercel.app/api/common"; 
 
-  const getOneBook = async () => {
+  const getOneBook = useCallback(async () => {
     const book = details.find(item => item._id === bookid)
     if (book) {
       setOneBook([book])
@@ -46,7 +46,7 @@ const Singlebook = () => {
         setComments(book.comments || []);
       }
     }
-  }
+  }, [details, bookid])
 
   const handleLike = async () => {
     const previousLiked = liked
@@ -70,7 +70,7 @@ const Singlebook = () => {
       })
       if (!response.ok) throw new Error()
       toast.success(newLikedStatus ? 'Book liked! ❤️' : 'Like removed')
-    } catch (err) {
+    } catch {
       setLiked(previousLiked)
       setLikeCount(previousCount)
       previousLiked ? localStorage.setItem(`liked_${bookid}`, 'true') : localStorage.removeItem(`liked_${bookid}`)
@@ -92,7 +92,7 @@ const Singlebook = () => {
       setComments(prev => [savedComment, ...prev])
       setNewComment('')
       toast.success('Comment added!')
-    } catch (err) {
+    } catch {
       toast.error("Failed to post comment")
     }
   }
@@ -111,7 +111,7 @@ const Singlebook = () => {
       link.click()
       link.remove()
       toast.success("Download started ✅")
-    } catch (err) {
+    } catch {
       window.open(url, "_blank")
       toast.error("Opened in new tab")
     } finally {
@@ -121,7 +121,7 @@ const Singlebook = () => {
 
   useEffect(() => {
     getOneBook()
-  }, [bookid, details])
+  }, [getOneBook])
 
   useEffect(() => {
     if (oneBook.length > 0) {

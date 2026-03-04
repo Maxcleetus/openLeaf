@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   MessageSquare,  
   User, 
@@ -145,12 +145,7 @@ const DiscussionDetail = () => {
 
   const commentFileInputRef = useRef(null);
 
-  // Load discussion details from API
-  useEffect(() => {
-    fetchDiscussionDetails();
-  }, [id]);
-
-  const fetchDiscussionDetails = async () => {
+  const fetchDiscussionDetails = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -180,7 +175,12 @@ const DiscussionDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  // Load discussion details from API
+  useEffect(() => {
+    fetchDiscussionDetails();
+  }, [fetchDiscussionDetails]);
 
   const handleAddComment = async () => {
     if (!newComment.content.trim() || !selectedTopic) return;
@@ -229,59 +229,6 @@ const DiscussionDetail = () => {
       setError('Failed to add comment: ' + error.message);
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleVote = async () => {
-    if (!selectedTopic) return;
-
-    try {
-      setError(null);
-      const updatedDiscussion = await discussionDetailService.upvoteDiscussion(
-        selectedTopic._id || selectedTopic.id
-      );
-      
-      // Update the upvotes in state
-      setSelectedTopic(prev => ({
-        ...prev,
-        upvotes: updatedDiscussion.upvotes || prev.upvotes + 1
-      }));
-    } catch (error) {
-      console.error('❌ Error upvoting discussion:', error);
-      setError('Failed to upvote discussion: ' + error.message);
-    }
-  };
-
-  const handleCommentVote = async (commentId) => {
-    if (!selectedTopic) return;
-
-    try {
-      setError(null);
-      const updatedDiscussion = await discussionDetailService.upvoteComment(
-        selectedTopic._id || selectedTopic.id,
-        commentId
-      );
-      
-      // Find and update the specific comment
-      setSelectedTopic(prev => {
-        const updatedComments = (prev.comments || []).map(comment => {
-          if (comment._id === commentId || comment.id === commentId) {
-            return {
-              ...comment,
-              upvotes: (comment.upvotes || 0) + 1
-            };
-          }
-          return comment;
-        });
-        
-        return {
-          ...prev,
-          comments: updatedComments
-        };
-      });
-    } catch (error) {
-      console.error('❌ Error upvoting comment:', error);
-      setError('Failed to upvote comment: ' + error.message);
     }
   };
 

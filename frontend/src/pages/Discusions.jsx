@@ -179,10 +179,10 @@ const Discussions = () => {
 
       // Extract the created discussion from response
       let createdTopic;
-      if (response.data) {
-        createdTopic = response.data; // If backend returns { data: {...} }
-      } else if (response.success && response.data) {
+      if (response.success && response.data) {
         createdTopic = response.data; // If backend returns { success: true, data: {...} }
+      } else if (response.data) {
+        createdTopic = response.data; // If backend returns { data: {...} }
       } else {
         createdTopic = response; // If backend returns the discussion directly
       }

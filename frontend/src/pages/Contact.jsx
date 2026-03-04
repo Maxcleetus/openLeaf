@@ -4,8 +4,10 @@ import { toast } from "react-toastify"
 
 const categories = ['cse','eee','ec','robo','civil','mech','other']
 const semesters = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
-const MAX_PDF_SIZE_MB = 3
+const MAX_PDF_SIZE_MB = 2.5
 const MAX_IMAGE_SIZE_MB = 2
+const MAX_REQUEST_SIZE_MB = 4
+const TARGET_IMAGE_SIZE_KB = 350
 
 // Default book cover image
 const DEFAULT_BOOK_COVER = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=500&fit=crop&auto=format"
@@ -22,6 +24,48 @@ const fileToBase64 = (file) => {
     reader.onerror = (error) => reject(error);
   });
 };
+
+const compressImageToBase64 = async (file) => {
+  if (!file) return null
+
+  if (file.type === "image/gif") {
+    return fileToBase64(file)
+  }
+
+  const objectUrl = URL.createObjectURL(file)
+  try {
+    const img = await new Promise((resolve, reject) => {
+      const imageEl = new Image()
+      imageEl.onload = () => resolve(imageEl)
+      imageEl.onerror = reject
+      imageEl.src = objectUrl
+    })
+
+    const maxWidth = 1200
+    const maxHeight = 1200
+    const scale = Math.min(1, maxWidth / img.width, maxHeight / img.height)
+    const canvas = document.createElement("canvas")
+    canvas.width = Math.round(img.width * scale)
+    canvas.height = Math.round(img.height * scale)
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) throw new Error("Failed to process image")
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+    let quality = 0.82
+    let result = canvas.toDataURL("image/jpeg", quality)
+    const maxLength = TARGET_IMAGE_SIZE_KB * 1024 * 1.37
+
+    while (result.length > maxLength && quality > 0.45) {
+      quality -= 0.07
+      result = canvas.toDataURL("image/jpeg", quality)
+    }
+
+    return result
+  } finally {
+    URL.revokeObjectURL(objectUrl)
+  }
+}
 
 export default function Contact() {
   const [bookData, setBookData] = useState({
@@ -46,7 +90,7 @@ export default function Contact() {
     setBookData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files?.[0]
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -62,13 +106,16 @@ export default function Contact() {
         return
       }
 
-      setBookData((prev) => ({ ...prev, image: file }))
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setImagePreview(event.target?.result)
+      try {
+        const compressedImage = await compressImageToBase64(file)
+        setBookData((prev) => ({ ...prev, image: compressedImage }))
+        setImagePreview(compressedImage)
         setUseDefaultCover(false)
+      } catch (error) {
+        console.error("Image processing error:", error)
+        toast.error("Failed to process image. Please try another file.")
+        e.target.value = ""
       }
-      reader.readAsDataURL(file)
     } else {
       setBookData((prev) => ({ ...prev, image: null }))
       setImagePreview(DEFAULT_BOOK_COVER)
@@ -146,8 +193,7 @@ export default function Contact() {
       
       let base64Image = null;
       if (bookData.image) {
-        toast.info("Converting image file...");
-        base64Image = await fileToBase64(bookData.image);
+        base64Image = bookData.image;
       } else if (useDefaultCover) {
         toast.info("Using default book cover...");
         base64Image = DEFAULT_BOOK_COVER;
@@ -178,6 +224,11 @@ export default function Contact() {
         linkedin: bookData.linkedin,
         useDefaultCover: useDefaultCover,
       };
+
+      const payloadBytes = new Blob([JSON.stringify(payload)]).size
+      if (payloadBytes > MAX_REQUEST_SIZE_MB * 1024 * 1024) {
+        throw new Error(`Upload payload is too large. Keep PDF under ${MAX_PDF_SIZE_MB} MB and use a smaller image.`)
+      }
       
       // Step 5: Uploading to server
       setUploadStep("Uploading to server...");
@@ -201,7 +252,7 @@ export default function Contact() {
         try {
           const errorBody = await response.json();
           if (errorBody.message) errorMessage = errorBody.message;
-        } catch (e) {
+        } catch {
           // Ignore JSON parsing errors
         }
         throw new Error(errorMessage);

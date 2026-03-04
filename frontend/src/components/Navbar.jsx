@@ -12,6 +12,16 @@ const Navbar = () => {
 
   const { details } = useAppContext()
   const navigate = useNavigate()
+  const searchableDetails = Array.isArray(details) ? details : []
+
+  useEffect(() => {
+    if (!isOpen) return
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   return (
     <div>
       <div className='flex flex-col md:flex-row  justify-between md:items-center gap-4 py-4 '>
@@ -60,11 +70,11 @@ const Navbar = () => {
               focus ? <div className=' fixed inset-0 bg-[#E9E9E9]'>
                 <p className='fixed top-4 right-4 cursor-pointer' onClick={() => { setFocused(false); setFilter(''); }}>Cancel</p>
                 <div className='grid grid-cols-2 px-2 md:flex flex-wrap gap-2 items-center scrollbar-hidden justify-center overflow-y-scroll pt-24 h-full'>
-                  {details.filter((item) => {
+                  {searchableDetails.filter((item) => {
                     return filter.toLowerCase() === '' ? item : item.name.toLowerCase().includes(filter.toLowerCase())
                   }).slice(0, 20).map((item) => (
-                    <div>
-                      <img onClick={() => { navigate(`/singlebook/${item._id} `); setFocused(false); setFilter(''); }} className='w-64 h-64 border-2 border-[#035DCA] rounded-lg' src={item.image} alt="" />
+                    <div key={item._id}>
+                      <img onClick={() => { navigate(`/singlebook/${item._id}`); setFocused(false); setFilter(''); }} className='w-64 h-64 border-2 border-[#035DCA] rounded-lg' src={item.image} alt={item.name} />
                       <p className='text-center'>{item.name}</p>
                     </div>
                   ))}
