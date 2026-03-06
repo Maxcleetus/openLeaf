@@ -61,8 +61,6 @@ ADMIN_PASSWORD=password
 JWT_SECRET=your_jwt_secret
 
 GEMINI_API_KEY=your_gemini_api_key
-EMAIL_USER=your_gmail_address
-EMAIL_PASS=your_gmail_app_password
 ```
 
 ### 3) Run services
@@ -100,7 +98,7 @@ If you want to run the API directly with `npm run dev`, uncomment the `app.liste
 - `POST /api/common/addBook` - add a book
 - `PUT /api/common/book/:id` - update a book
 - `DELETE /api/common/book/:id` - delete a book
-- `POST /api/common/explain-topic` - generate study guide and email PDF
+- `POST /api/common/chat-response` - chatbot text response (Gemini via backend)
 - `GET /api/discussions` - list discussions
 - `POST /api/discussions` - create discussion
 

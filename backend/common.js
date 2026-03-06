@@ -3,7 +3,7 @@ import { addBook, addLike, addComment, deleteBookComment, deleteBook, updateBook
 import { adminLogin } from "./jwt.js";
 import { verifyAdminToken } from "./auth.js";
 import { getDetails } from "./details.js";
-import { handleChatbotRequest } from "./chatbot.js";
+import { handleChatResponse } from "./chatbot.js";
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ const router = express.Router();
 // Added verifyAdminToken to ensure only authorized users can upload
 router.post("/addBook", addBook);
 router.post("/login", adminLogin);
-router.post("/explain-topic", handleChatbotRequest);
+router.post("/chat-response", handleChatResponse);
 router.get("/auth", verifyAdminToken, (req, res) => {
   res.json({ valid: true });
 });

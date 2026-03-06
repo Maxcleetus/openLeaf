@@ -1,123 +1,65 @@
-import PDFDocument from "pdfkit";
-import nodemailer from "nodemailer";
+const getGeminiResponse = async (question, prompt) => {
+  const API_KEY = process.env.GEMINI_API_KEY;
+  if (!API_KEY) {
+    throw new Error("GEMINI_API_KEY is not configured on the backend.");
+  }
 
-export const handleChatbotRequest = async (req, res) => {
-  const { question, email } = req.body;
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
-  if (!question || !email) {
-    return res.status(400).json({ message: "Topic and Email are required." });
+  const aiResponse = await fetch(GEMINI_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [
+        {
+          parts: [
+            {
+              text: prompt(question),
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        topK: 1,
+        topP: 1,
+        maxOutputTokens: 2500,
+      },
+    }),
+  });
+
+  const data = await aiResponse.json();
+  if (!aiResponse.ok) {
+    throw new Error(data.error?.message || "Gemini API Error");
+  }
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+};
+
+export const handleChatResponse = async (req, res) => {
+  const { question } = req.body;
+
+  if (!question) {
+    return res.status(400).json({ message: "Question is required." });
   }
 
   try {
-    const API_KEY = process.env.GEMINI_API_KEY;
-    // Updated to a valid model version (1.5-flash or 2.0-flash)
-    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-    
-    const aiResponse = await fetch(GEMINI_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ 
-          parts: [{ 
-            text: `Explain "${question}" for a student. Use clear headings, bullet points, and a detailed summary. Keep it professional.` 
-          }] 
-        }]
-      })
-    });
+    const text = await getGeminiResponse(
+      question,
+      (q) => `Provide a comprehensive explanation of "${q}" for educational purposes. Structure your response with:
 
-    const data = await aiResponse.json();
-    if (!aiResponse.ok) throw new Error(data.error?.message || "Gemini API Error");
-    const text = data.candidates[0].content.parts[0].text;
+1. **Overview** - Brief introduction
+2. **Key Concepts** - Core principles with bullet points
+3. **Detailed Explanation** - In-depth analysis
+4. **Real-World Applications** - Practical examples
+5. **Common Questions** - FAQ section
+6. **Summary & Takeaways** - Key points to remember
 
-    // --- PDF GENERATION ---
-    // bufferPages: true is essential for page numbering
-    const doc = new PDFDocument({ margin: 50, bufferPages: true });
-    let buffers = [];
-    doc.on('data', (chunk) => buffers.push(chunk));
-    
-    // Move the email logic inside the 'end' event
-    doc.on('end', async () => {
-      const pdfBuffer = Buffer.concat(buffers);
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-      });
+Use clear headings, bullet points for lists, and maintain a professional yet accessible tone suitable for students and learners. Only maximum 400 words.`
+    );
 
-      const mailOptions = {
-        from: `"ReadMe AI Assistant" <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: `Study Guide: ${question}`,
-        text: `Hello! Your structured study guide for "${question}" is attached.`,
-        attachments: [{ 
-            filename: `Study_Guide_${question.replace(/\s+/g, '_')}.pdf`, 
-            content: pdfBuffer 
-        }],
-      };
-
-      await transporter.sendMail(mailOptions);
-    });
-
-    // --- PDF CONTENT DESIGN ---
-
-    // 1. Top Decorative Banner
-    doc.rect(0, 0, 612, 40).fill('#035DCA'); 
-    doc.fillColor("#FFFFFF").fontSize(14).text("README AI STUDY ASSISTANT", 50, 15, { characterSpacing: 1 });
-
-    // 2. Title Section
-    doc.moveDown(4);
-    doc.fillColor("#1e293b").fontSize(28).font("Helvetica-Bold").text(question.toUpperCase(), { align: "left" });
-    doc.moveDown(0.2);
-    doc.strokeColor("#035DCA").lineWidth(3).moveTo(50, doc.y).lineTo(150, doc.y).stroke();
-    doc.moveDown(2);
-
-    // 3. Metadata Box
-    const startY = doc.y;
-    doc.rect(50, startY, 512, 40).fill("#f8fafc");
-    doc.fillColor("#64748b").fontSize(9).font("Helvetica")
-       .text(`TOPIC: ${question}`, 65, startY + 10)
-       .text(`DATE: ${new Date().toLocaleDateString()}`, 65, startY + 22);
-    doc.moveDown(3);
-
-    // 4. Body Content
-    const sections = text.split(/(?=#{1,3}\s)/g); 
-    sections.forEach(section => {
-      if (section.startsWith('#')) {
-        const lines = section.trim().split('\n');
-        const cleanTitle = lines[0].replace(/#/g, '').trim();
-        const content = lines.slice(1).join('\n');
-
-        doc.fillColor("#035DCA").fontSize(16).font("Helvetica-Bold").text(cleanTitle);
-        doc.moveDown(0.5);
-        doc.fillColor("#334155").fontSize(11).font("Helvetica").text(content, { lineGap: 4, paragraphGap: 10, align: 'justify' });
-        doc.moveDown(1.5);
-      } else {
-        doc.fillColor("#334155").fontSize(11).font("Helvetica").text(section, { lineGap: 4, paragraphGap: 10, align: 'justify' });
-      }
-    });
-
-    // 5. Global Footer & Page Numbers
-    // This loop must happen AFTER all content is added but BEFORE doc.end()
-    const range = doc.bufferedPageRange();
-    for (let i = range.start; i < range.start + range.count; i++) {
-      doc.switchToPage(i);
-      
-      const footerY = doc.page.height - 200;
-      
-      doc.strokeColor("#e2e8f0").lineWidth(1).moveTo(50, footerY - 10).lineTo(562, footerY - 10).stroke();
-      
-      doc.fillColor("#94a3b8").fontSize(8)
-         .text(`Page ${i + 1} of ${range.count}`, 50, footerY, { align: "right" })
-         .text("Generated by ReadMe AI • Educational Support Tool", 50, footerY, { align: "left" });
-    }
-
-    // Finalize the stream
-    doc.end();
-    
-    // Send immediate response to the client while the 'end' event handles the email
-    res.status(200).json({ message: "Processing complete. PDF will be sent to your email." });
-
+    res.status(200).json({ text });
   } catch (error) {
-    console.error("❌ Chatbot Error:", error.message);
+    console.error("Chatbot response error:", error.message);
     res.status(500).json({ message: "Service Error", error: error.message });
   }
 };

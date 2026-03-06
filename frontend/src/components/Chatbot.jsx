@@ -15,6 +15,7 @@ const Chatbot = () => {
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const chatContainerRef = useRef(null);
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://open-leaf.vercel.app/api/common";
 
     // Auto-scroll to bottom when new messages are added
     useEffect(() => {
@@ -22,9 +23,6 @@ const Chatbot = () => {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
     }, [messages]);
-
-    // Your Gemini API Key
-    const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
     const formatAIResponse = (text) => {
         // Enhanced formatting for better readability
@@ -44,50 +42,22 @@ const Chatbot = () => {
 
     const getAIResponse = async (question) => {
         try {
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        contents: [
-                            {
-                                parts: [
-                                    {
-                                        text: `Provide a comprehensive explanation of "${question}" for educational purposes. Structure your response with:
-
-1. **Overview** - Brief introduction
-2. **Key Concepts** - Core principles with bullet points
-3. **Detailed Explanation** - In-depth analysis
-4. **Real-World Applications** - Practical examples
-5. **Common Questions** - FAQ section
-6. **Summary & Takeaways** - Key points to remember
-
-Use clear headings, bullet points for lists, and maintain a professional yet accessible tone suitable for students and learners. only maximum 400 words`
-                                    }
-                                ]
-                            }
-                        ],
-                        generationConfig: {
-                            temperature: 0.7,
-                            topK: 1,
-                            topP: 1,
-                            maxOutputTokens: 2500,
-                        },
-                    }),
-                }
-            );
+            const response = await fetch(`${API_BASE_URL}/chat-response`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ question }),
+            });
 
             if (!response.ok) {
                 throw new Error(`API Error: ${response.status}`);
             }
 
             const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
+            return data.text;
         } catch (error) {
-            console.error("Gemini API Error:", error);
+            console.error("Chatbot API Error:", error);
             return `I'll explain "${question}" in a structured way:
 
 ## Overview
@@ -180,7 +150,7 @@ Remember these key points for better understanding.`;
                 formattedText: formatAIResponse(fallbackResponse)
             };
             setMessages(prev => [...prev, botMessage]);
-            toast.warning("⚠️ Using fallback response - check API key");
+            toast.warning("⚠️ Using fallback response - check backend API");
         } finally {
             setLoading(false);
         }
@@ -195,85 +165,110 @@ Remember these key points for better understanding.`;
         try {
             toast.info("Generating PDF...");
 
-            const doc = new jsPDF();
-            const pageWidth = doc.internal.pageSize.width;
-            const margin = 20;
-            let yPos = 20;
+            const doc = new jsPDF({ unit: "pt", format: "a4" });
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const marginX = 44;
+            const topMargin = 56;
+            const bottomMargin = 52;
+            const cardPadding = 12;
+            const cardGap = 10;
+            const lineHeight = 16;
+            const cardWidth = pageWidth - marginX * 2;
+            const generatedAt = new Date().toLocaleString();
+            let yPos = topMargin + 44;
 
-            // Title
-            doc.setFontSize(24);
-            doc.setTextColor(3, 93, 202); // Blue color
-            doc.text("Read Me Assistant - Conversation", pageWidth / 2, yPos, { align: 'center' });
-            yPos += 15;
+            const normalizeText = (text) =>
+                text
+                    .replace(/\r\n/g, "\n")
+                    .replace(/^#{1,6}\s*/gm, "")
+                    .replace(/\*\*(.*?)\*\*/g, "$1")
+                    .replace(/\*(.*?)\*/g, "$1")
+                    .replace(/^\s*[-*]\s+/gm, "• ");
 
-            // Subtitle
-            doc.setFontSize(11);
-            doc.setTextColor(100, 116, 139); // Gray color
-            doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth / 2, yPos, { align: 'center' });
-            yPos += 20;
-
-            // Add a decorative line
-            doc.setDrawColor(3, 93, 202);
-            doc.setLineWidth(1);
-            doc.line(margin, yPos, pageWidth - margin, yPos);
-            yPos += 15;
-
-            // Conversation content
-            doc.setFontSize(12);
-            doc.setTextColor(0, 0, 0); // Black
-
-            messages.forEach((msg, index) => {
-                // Check if we need a new page
-                if (yPos > 270) {
-                    doc.addPage();
-                    yPos = 20;
-                }
-
-                // Sender label with background
-                const sender = msg.sender === "user" ? "YOU" : "ASSISTANT";
-                const bgColor = msg.sender === "user" ? [3, 93, 202] : [226, 232, 240]; // Blue or light gray
-                const textColor = msg.sender === "user" ? [255, 255, 255] : [0, 0, 0];
-
-                doc.setFillColor(...bgColor);
-                doc.rect(margin, yPos - 5, 40, 8, 'F');
-
+            const drawHeader = () => {
+                doc.setFillColor(241, 245, 249);
+                doc.rect(0, 0, pageWidth, 34, "F");
                 doc.setFont("helvetica", "bold");
-                doc.setTextColor(...textColor);
-                doc.text(sender, margin + 3, yPos + 2);
-
-                // Message text
+                doc.setFontSize(11);
+                doc.setTextColor(3, 93, 202);
+                doc.text("ReadMe Assistant Conversation", marginX, 22);
                 doc.setFont("helvetica", "normal");
-                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(9);
+                doc.setTextColor(100, 116, 139);
+                doc.text(generatedAt, pageWidth - marginX, 22, { align: "right" });
+            };
 
-                // Split long text into lines
-                const maxWidth = pageWidth - (margin * 2) - 45; // Leave space for sender label
-                const lines = doc.splitTextToSize(msg.text, maxWidth);
+            drawHeader();
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(21);
+            doc.setTextColor(15, 23, 42);
+            doc.text("Chat Transcript", marginX, topMargin);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
+            doc.setTextColor(71, 85, 105);
+            doc.text("Structured export of your conversation", marginX, topMargin + 18);
 
-                doc.text(lines, margin + 45, yPos + 2);
+            messages.forEach((msg) => {
+                const cleanText = normalizeText(msg.text);
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(11);
+                const textLines = doc.splitTextToSize(cleanText, cardWidth - cardPadding * 2);
+                const textBlockHeight = Math.max(lineHeight, textLines.length * lineHeight);
+                const cardHeight = 34 + textBlockHeight + cardPadding;
+                const maxY = pageHeight - bottomMargin;
 
-                // Calculate new y position based on text height
-                yPos += (lines.length * 7) + 15;
-
-                // Add separator between messages (not after last)
-                if (index < messages.length - 1) {
-                    doc.setDrawColor(200, 200, 200);
-                    doc.setLineWidth(0.5);
-                    doc.line(margin, yPos - 8, pageWidth - margin, yPos - 8);
-                    yPos += 5;
+                if (yPos + cardHeight > maxY) {
+                    doc.addPage();
+                    drawHeader();
+                    yPos = topMargin;
                 }
+
+                const isUser = msg.sender === "user";
+                const cardBg = isUser ? [239, 246, 255] : [248, 250, 252];
+                const borderColor = isUser ? [147, 197, 253] : [203, 213, 225];
+                const badgeBg = isUser ? [3, 93, 202] : [71, 85, 105];
+
+                doc.setFillColor(...cardBg);
+                doc.setDrawColor(...borderColor);
+                doc.setLineWidth(0.8);
+                doc.roundedRect(marginX, yPos, cardWidth, cardHeight, 8, 8, "FD");
+
+                doc.setFillColor(...badgeBg);
+                doc.roundedRect(marginX + 12, yPos + 10, 62, 14, 4, 4, "F");
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(8);
+                doc.setTextColor(255, 255, 255);
+                doc.text(isUser ? "YOU" : "ASSISTANT", marginX + 43, yPos + 20, { align: "center" });
+
+                if (msg.timestamp) {
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 116, 139);
+                    doc.text(msg.timestamp, marginX + cardWidth - 12, yPos + 20, { align: "right" });
+                }
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(11);
+                doc.setTextColor(15, 23, 42);
+                doc.text(textLines, marginX + cardPadding, yPos + 38);
+
+                yPos += cardHeight + cardGap;
             });
 
-            // Footer on each page
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
+                doc.setDrawColor(226, 232, 240);
+                doc.setLineWidth(0.8);
+                doc.line(marginX, pageHeight - 32, pageWidth - marginX, pageHeight - 32);
+                doc.setFont("helvetica", "normal");
                 doc.setFontSize(8);
                 doc.setTextColor(100, 116, 139);
-                doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin, doc.internal.pageSize.height - 10, { align: 'right' });
-                doc.text("Generated by Read Me Assistant", margin, doc.internal.pageSize.height - 10);
+                doc.text(`Page ${i} of ${pageCount}`, pageWidth - marginX, pageHeight - 20, { align: "right" });
+                doc.text("Generated by ReadMe Assistant", marginX, pageHeight - 20);
             }
 
-            // Save PDF
             doc.save(`ai-chatbot-conversation-${Date.now()}.pdf`);
             toast.success("PDF downloaded successfully!");
 
